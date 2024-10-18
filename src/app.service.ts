@@ -1,23 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "./UserEntity";
-import { Repository } from "typeorm";
-import { ObjectId } from 'mongodb';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { User, UserDocument } from './user.schema';  // Correct import
 
 @Injectable()
 export class AppService {
-    constructor(
-        @InjectRepository(User) private readonly userRepository: Repository<User>
-    ) {}
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+  ) {}
 
-    async create(data: any): Promise<User> {
-        return this.userRepository.save(data);
-    }
+  async create(data: any): Promise<UserDocument> {
+    const newUser = new this.userModel(data);
+    return newUser.save();
+  }
 
-    async findOne(condition: any): Promise<User> {
-        if (condition._id) {
-            condition._id = new ObjectId(condition._id);
-        }
-        return this.userRepository.findOne(condition);
-    }
+  async findOne(condition: any): Promise<UserDocument> {
+    return this.userModel.findOne(condition).exec();
+  }
 }
