@@ -2,6 +2,7 @@
 
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { createClient, RedisClientType } from 'redis';
+import { RedisIoAdapter } from './adapter/adapter.service';
 
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
