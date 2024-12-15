@@ -13,7 +13,7 @@ export class Otp {
     enum: ['mobile', 'email'],
     default: 'email',
   })
-  type: string;
+  type?: string;
 
   @Prop({
     type: String,

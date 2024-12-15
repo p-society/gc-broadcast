@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { MongooseError } from 'mongoose';
+import { ZodError } from 'zod';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -18,6 +19,12 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       return response
         .status(exception.getStatus())
         .json(exception.getResponse());
+    }
+
+    if (exception instanceof ZodError) {
+      const error = new BadRequestException(exception);
+
+      return response.status(error.getStatus()).json(error.getResponse());
     }
 
     if (exception instanceof MongooseError) {

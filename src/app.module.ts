@@ -10,6 +10,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RedisModule } from './services/apis/redis/redis.module';
 import { UsersModule } from './services/apis/users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { SendOtpModule } from './services/apis/sendOtp/sendOtp.module';
 
 @Module({
   imports: [
@@ -26,8 +27,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
       inject: [ConfigService],
     }),
-    UsersModule,
     AuthModule,
+    UsersModule,
+    SendOtpModule,
     AdapterModule,
   ],
   controllers: [AppController],

@@ -14,6 +14,7 @@ export class GlobalService<T, TDocument> {
       handleSoftDelete: true,
     },
   ): Promise<PaginatedResponse<T> | T[]> {
+    console.log({ query });
     if (!findOptions.handleSoftDelete) {
       throw new BadRequestException(
         'findOptions.handleSoftDelete not provided in _find.',

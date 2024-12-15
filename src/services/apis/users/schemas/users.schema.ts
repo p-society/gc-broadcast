@@ -8,7 +8,28 @@ export type UsersDocument = HydratedDocument<Users>;
 })
 export class Users {
   @Prop({ trim: true })
-  name?: string;
+  firstName?: string;
+
+  @Prop({ trim: true })
+  middleName?: string;
+
+  @Prop({ trim: true })
+  lastName?: string;
+
+  @Prop({ trim: true })
+  phone: string;
+
+  @Prop({ trim: true })
+  email: string;
+
+  @Prop({ trim: true })
+  gender: string;
+
+  @Prop({ trim: true })
+  batch: string;
+
+  @Prop({ trim: true })
+  branch: string;
 
   @Prop({ trim: true })
   password: string;

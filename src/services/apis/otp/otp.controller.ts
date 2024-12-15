@@ -12,11 +12,13 @@ import { OtpService } from './otp.service';
 import { ModifyBody, setCreatedBy } from 'src/decorators/ModifyBody.decorator';
 import { User } from '../users/decorator/user.decorator';
 import { Otp } from './schemas/otp.schema';
+import { Public } from '../auth/decorators/public.decorator';
 
 @Controller('otp')
 export class OtpController {
   constructor(private readonly otpService: OtpService) {}
 
+  @Public()
   @Get()
   async find(@Query() query: Record<string, any>) {
     return await this.otpService._find(query);
