@@ -15,12 +15,15 @@ import { User } from '../users/decorator/user.decorator';
 import { Users } from './schemas/users.schema';
 import { OtpService } from '../otp/otp.service';
 import { Otp } from '../otp/schemas/otp.schema';
-
+import { Public } from '../auth/decorators/public.decorator';
+import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 @Controller('users')
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly otpService: OtpService,
+    private jwtService: JwtService,
   ) {}
 
   @Get()
@@ -33,12 +36,25 @@ export class UsersController {
     return await this.usersService._get(id, query);
   }
 
+  @Public()
   @Post()
   async create(@Body() createUsersDto: Users) {
     await this.verifyOTP(createUsersDto);
-    const resp = await this.usersService._create(createUsersDto);
-    await this.removeOTP(createUsersDto['email']);
-    return resp;
+
+    const saltOrRounds = 10;
+    const password = await bcrypt.hash(createUsersDto.password, saltOrRounds);
+
+    const user = (await this.usersService._create({
+      ...createUsersDto,
+      password,
+    })) as Users;
+    await this.removeOTP(createUsersDto.email);
+    const sanitizedUser = this.usersService.sanitizeUser(user);
+    const payload = { sub: { id: user._id }, user };
+    return {
+      user: sanitizedUser,
+      accessToken: await this.jwtService.signAsync(payload),
+    };
   }
 
   @Patch('/:id?')
@@ -59,30 +75,33 @@ export class UsersController {
     if (!Object.keys(createUsersDto).includes('otp')) {
       throw new BadRequestException('OTP not provided!');
     }
+    console.log({ createUsersDto });
 
-    const [code] = (await this.otpService._find({
-      $populate: false,
-      dest: createUsersDto['email'],
+    const codes = (await this.otpService._find({
+      $paginate: false,
+      dest: createUsersDto.email,
       $sort: {
-        createdAt: -1,
+        createdAt: '-1',
       },
     })) as Otp[];
-
+    const code = codes[codes.length - 1];
+    console.log({ code });
     if (!code) {
       throw new BadRequestException('otp not found!');
     }
 
+    console.log(code.otp, createUsersDto['otp']);
     if (code.otp !== createUsersDto['otp']) {
       throw new BadRequestException('OTP Mismatched!');
     }
     return;
   }
 
-  async removeOTP(createUsersDto: Users) {
+  async removeOTP(dest: string) {
     await this.otpService._remove(
       null,
       {
-        dest: createUsersDto['email'],
+        dest,
       },
       null,
       {

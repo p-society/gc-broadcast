@@ -1,6 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
 import { Types } from 'mongoose';
-import _ from 'lodash';
 
 export const FILTERS = {
   $sort: (value) => convertSort(value),
@@ -111,29 +110,31 @@ export const filterQuery = (query, options = {}) => {
 
 export const assignFilters = (object, query, filters, options) => {
   if (Array.isArray(filters)) {
-    _.forEach(filters, (key) => {
+    filters.forEach((key) => {
       if (query[key] !== undefined) {
         object[key] = query[key];
       }
     });
   } else {
-    _.forEach(filters, (converter, key) => {
+    Object.keys(filters).forEach((key) => {
+      const converter = filters[key];
       const converted = converter(query[key], options);
       if (converted !== undefined) {
         object[key] = converted;
       }
     });
   }
+
   return object;
 };
 
 export const cleanQuery = (query, operators, filters) => {
   if (Array.isArray(query)) {
     return query.map((value) => cleanQuery(value, operators, filters));
-  } else if (_.isPlainObject(query)) {
+  } else if (typeof query === 'object' && query !== null) {
     const result = {};
 
-    _.forEach(query, (value, key) => {
+    Object.keys(query).forEach((key) => {
       if (key.startsWith('$')) {
         if (filters[key] === undefined && !operators.includes(key)) {
           throw new BadRequestException(
@@ -142,9 +143,10 @@ export const cleanQuery = (query, operators, filters) => {
           );
         }
       }
-      result[key] = cleanQuery(value, operators, filters);
+      result[key] = cleanQuery(query[key], operators, filters);
     });
 
+    // Copy over symbols
     Object.getOwnPropertySymbols(query).forEach((symbol) => {
       result[symbol] = query[symbol];
     });
