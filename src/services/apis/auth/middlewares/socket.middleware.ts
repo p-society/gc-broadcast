@@ -1,9 +1,9 @@
 import { UnauthorizedException } from '@nestjs/common';
-import { jwtConstants } from '../constants';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from 'src/users/users.service';
 import { SocketIOMiddleware } from 'src/types/SocketIOMiddlware';
 import { SocketClient } from 'src/types/SocketClient';
+import { UsersService } from '../../users/users.service';
+import { jwtConstants } from '../constants/jwt-constants';
 
 export const SocketAuthMiddleware =
   (jwtService: JwtService, userService: UsersService): SocketIOMiddleware =>
@@ -18,7 +18,8 @@ export const SocketAuthMiddleware =
         const payload = await jwtService.verifyAsync(token, {
           secret: jwtConstants.secret,
         });
-        const user = await userService.findOne(payload.sub);
+
+        const user = await userService._get(payload.sub);
         if (user) {
           client['user'] = user;
           return next();

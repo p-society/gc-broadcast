@@ -12,13 +12,13 @@ export class AuthService {
   ) {}
 
   async signIn(email: string, pass: string): Promise<any> {
-    const [user] = await this.usersService._find({
+    const [user] = (await this.usersService._find({
       $populate: false,
       email,
-      $limit:1
-    }) as Users[]
+      $limit: 1,
+    })) as Users[];
     if (!user) throw new UnauthorizedException();
-    const passwordValid = await bcrypt.compare(pass, user.password)
+    const passwordValid = await bcrypt.compare(pass, user.password);
     // const passwordValid = pass === user.password;
     if (!passwordValid) {
       throw new UnauthorizedException();

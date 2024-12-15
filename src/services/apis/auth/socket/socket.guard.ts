@@ -7,10 +7,10 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
-import { UsersService } from 'src/users/users.service';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { Socket } from 'socket.io';
-import { jwtConstants } from '../constants';
+import { UsersService } from '../../users/users.service';
+import { jwtConstants } from '../constants/jwt-constants';
 
 /**
  * @deprecated Use `SocketAuthMiddleware` instead for WebSocket authentication.
@@ -40,7 +40,7 @@ export class SocketGuard implements CanActivate {
         secret: jwtConstants.secret,
       });
 
-      const user = await this.userService.findOne(payload.sub);
+      const user = await this.userService._get(payload.sub);
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
       if (user) {
