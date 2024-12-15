@@ -78,7 +78,7 @@ export class GlobalService<T, TDocument> {
   async _patch(
     id: string | null,
     data: Partial<T>,
-    query: Record<string, any> = {},
+    query: InternalQueryOption<T>,
     patchOptions = {
       handleSoftDelete: true,
     },
@@ -112,7 +112,7 @@ export class GlobalService<T, TDocument> {
 
   async _get(
     id: string,
-    query: Record<string, any> = {},
+    query: InternalQueryOption<T>,
     getOptions = {
       handleSoftDelete: true,
     },
@@ -134,7 +134,7 @@ export class GlobalService<T, TDocument> {
 
   async _remove(
     id: string | null,
-    query: Record<string, any> = {},
+    query: InternalQueryOption<T>,
     user: any,
     removeOptions = {
       handleSoftDelete: true,
@@ -154,7 +154,7 @@ export class GlobalService<T, TDocument> {
           deletedBy: user._id,
           deletedAt: new Date(),
         } as unknown as Partial<T>,
-        searchQuery,
+        searchQuery as InternalQueryOption<T>,
       );
       return data;
     }
