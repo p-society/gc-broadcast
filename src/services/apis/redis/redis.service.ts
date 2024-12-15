@@ -28,20 +28,22 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     console.log('Redis disconnected.');
   }
 
-  async get(k: string): Promise<string | null> {
-    return await this.client.get(k);
+  async get(key: string): Promise<string | null> {
+    return await this.client.get(key);
   }
 
+  async keys(pattern: string): Promise<string[] | null> {
+    return await this.client.keys(pattern);
+  }
   async set(
     key: string,
     value: string,
     expirationInSeconds?: number,
-  ): Promise<any> {
-    if (expirationInSeconds) {
-      return await this.client.set(key, value, {
-        EX: expirationInSeconds,
-      });
+  ): Promise<string> {
+    if (expirationInSeconds !== undefined) {
+      return await this.client.set(key, value, { EX: expirationInSeconds });
     }
+
     return await this.client.set(key, value);
   }
 
@@ -49,17 +51,46 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     return await this.client.del(key);
   }
 
-  async mget(keys: string[]): Promise<string[]> {
+  async mget(keys: string[]): Promise<(string | null)[]> {
     if (keys.length === 0) {
       return [];
     }
-
     return await this.client.mGet(keys);
   }
-  async sendCommand<T = any>(pattern: string): Promise<T[]> {
-    const command = ['SCAN', '0', 'MATCH', pattern, 'COUNT', '100'];
-    const result: Array<any> = await this.client.sendCommand(command);
 
-    return Array.from(result[1] || []);
+  async sadd(key: string, ...members: string[]): Promise<number> {
+    return await this.client.sAdd(key, members);
+  }
+
+  async smembers(key: string): Promise<string[]> {
+    return await this.client.sMembers(key);
+  }
+
+  async srem(key: string, ...members: string[]): Promise<number> {
+    return await this.client.sRem(key, members);
+  }
+
+  async sismember(key: string, member: string): Promise<boolean> {
+    return await this.client.sIsMember(key, member);
+  }
+
+  async sendCommand<T = any>(command: string[]): Promise<T> {
+    return await this.client.sendCommand(command);
+  }
+
+  async exists(key: string): Promise<boolean> {
+    const result = await this.client.exists(key);
+    return result === 1;
+  }
+
+  async expire(key: string, seconds: number): Promise<boolean> {
+    const result = await this.client.expire(key, seconds);
+    return result;
+  }
+
+  async ttl(key: string): Promise<number> {
+    return await this.client.ttl(key);
   }
 }
+
+
