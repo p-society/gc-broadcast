@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { UsersDocument } from '../users/schemas/users.schema';
 import { Request as ExRequest } from 'express-serve-static-core';
+import { UsersDocument } from 'src/services/apis/users/schemas/users.schema';
 
 declare type Request = {
   user: UsersDocument;

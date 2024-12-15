@@ -7,14 +7,12 @@ export type UsersDocument = HydratedDocument<Users>;
   timestamps: true,
 })
 export class Users {
-
   @Prop({ trim: true })
   name?: string;
 
-
   @Prop({ trim: true })
   password: string;
-  
+
   @Prop({
     type: Types.ObjectId,
     ref: Users.name,
@@ -31,7 +29,7 @@ export class Users {
   deletedBy: Types.ObjectId;
 
   @Prop({
-    type: Date
+    type: Date,
   })
   deletedAt: Date;
   _id: any;

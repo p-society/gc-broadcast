@@ -9,9 +9,9 @@ const getController = (Name, name, url) => `import {
   Query,
 } from '@nestjs/common';
 import { ${Name}Service } from './${name}.service';
-import { Create${Name}DTO, Patch${Name}DTO } from './dto/${name}.dto';
 import { ModifyBody, setCreatedBy } from 'src/decorators/ModifyBody.decorator';
 import { User } from '../users/decorator/user.decorator';
+import { ${Name} } from './schemas/${name}.schema';
 
 @Controller('${url}')
 export class ${Name}Controller {
@@ -29,7 +29,7 @@ export class ${Name}Controller {
 
   @Post()
   async create(
-    @ModifyBody(setCreatedBy()) create${Name}Dto: Create${Name}DTO
+    @ModifyBody(setCreatedBy()) create${Name}Dto: ${Name}
   ) {
     return await this.${name}Service._create(create${Name}Dto);
   }
@@ -37,7 +37,7 @@ export class ${Name}Controller {
   @Patch('/:id?')
   async patch(
     @Query() query,
-    @Body() patch${Name}Dto: Patch${Name}DTO,
+    @Body() patch${Name}Dto: Partial<${Name}>,
     @Param('id') id,
   ) {
     return await this.${name}Service._patch(id, patch${Name}Dto, query);

@@ -9,14 +9,23 @@ import { GlobalExceptionFilter } from './filters/global-exception.filter';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RedisModule } from './services/apis/redis/redis.module';
 import { UsersModule } from './services/apis/users/users.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: `.env`,
+    }),
     RedisModule,
     EventEmitterModule.forRoot(),
-    MongooseModule.forRoot(
-      'mongodb+srv://soubhik:soubhik@sports.vj9j4tb.mongodb.net/?retryWrites=true&w=majority&appName=Sports',
-    ), 
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGODB_URI'),
+      }),
+      inject: [ConfigService],
+    }),
     UsersModule,
     AuthModule,
     AdapterModule,
