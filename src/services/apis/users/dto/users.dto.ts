@@ -1,7 +1,7 @@
-const getDto = (Name) => `import { z } from 'zod';
+import { z } from 'zod';
 import { Types } from 'mongoose';
 
-export const Create${Name}Validation = z.object({
+export const CreateUsersValidation = z.object({
   name: z.string().optional(),
   createdBy: z
     .string()
@@ -21,7 +21,7 @@ export const Create${Name}Validation = z.object({
   deletedAt: z.date().optional(),
 });
 
-export const Patch${Name}Validation = z.object({
+export const PatchUsersValidation = z.object({
   name: z.string().optional(),
   updatedAt: z.date().optional(),
   createdAt: z.date().optional(),
@@ -35,7 +35,7 @@ export const Patch${Name}Validation = z.object({
   deletedAt: z.date().optional(),
 });
 
-export const Remove${Name}Validation = z.object({
+export const RemoveUsersValidation = z.object({
   id: z.string().refine((val) => Types.ObjectId.isValid(val), {
     message: 'Invalid user ID',
   }),
@@ -48,9 +48,6 @@ export const Remove${Name}Validation = z.object({
   deletedAt: z.date().optional(),
 });
 
-export type Create${Name}DTO = z.infer<typeof Create${Name}Validation>;
-export type Patch${Name}DTO = z.infer<typeof Patch${Name}Validation>;
-export type Remove${Name}DTO = z.infer<typeof Remove${Name}Validation>;
-`;
-
-module.exports = getDto;
+export type CreateUsersDTO = z.infer<typeof CreateUsersValidation>;
+export type PatchUsersDTO = z.infer<typeof PatchUsersValidation>;
+export type RemoveUsersDTO = z.infer<typeof RemoveUsersValidation>;
