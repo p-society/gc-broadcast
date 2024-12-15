@@ -1,11 +1,11 @@
-export enum PresenceSocketEvents{
-    ONLINE = 'online',
-    OFFLINE = 'offline',
+export enum PresenceSocketEvents {
+  ONLINE = 'online',
+  OFFLINE = 'offline',
 
-    IN_CLIENT_CONNECTED = 'in:client:connected',
-    IN_CLIENT_DISCONNECTED = 'in:client:disconnected',
+  IN_CLIENT_CONNECTED = 'in:client:connected',
+  IN_CLIENT_DISCONNECTED = 'in:client:disconnected',
 
-    PUBLIC_STATUS_CHANGE = 'pub:status:change',
+  PUBLIC_STATUS_CHANGE = 'pub:status:change',
 
-    HEARTBEAT = 'heartbeat'
+  HEARTBEAT = 'heartbeat',
 }

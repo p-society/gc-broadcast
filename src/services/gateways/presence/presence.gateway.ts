@@ -54,7 +54,7 @@ export class EventsGateway
     const user = client['user'];
     const USER_ID = String(client.user._id);
     const SOCK_ID = client.id;
-    
+
     if (user) {
       await this.redisService.set(
         `user:${USER_ID}:socket:${SOCK_ID}`,
@@ -71,7 +71,10 @@ export class EventsGateway
       },
     };
 
-    this.internalEventEmitter.emit(PresenceSocketEvents.IN_CLIENT_CONNECTED, eventPayload);
+    this.internalEventEmitter.emit(
+      PresenceSocketEvents.IN_CLIENT_CONNECTED,
+      eventPayload,
+    );
   }
 
   async handleDisconnect(client: SocketClient) {
@@ -79,11 +82,9 @@ export class EventsGateway
 
     const USER_ID = String(client.user._id);
     const SOCK_ID = client.id;
-    
+
     if (user) {
-      await this.redisService.del(
-        `user:${USER_ID}:socket:${SOCK_ID}`,
-      );
+      await this.redisService.del(`user:${USER_ID}:socket:${SOCK_ID}`);
       this.notifyStatusChange(USER_ID, PresenceSocketEvents.OFFLINE);
     }
 
@@ -122,7 +123,7 @@ export class EventsGateway
 
     const USER_ID = String(client.user._id);
     const SOCK_ID = client.id;
-    
+
     if (user) {
       await this.redisService.set(
         `user:${USER_ID}:socket:${SOCK_ID}`,

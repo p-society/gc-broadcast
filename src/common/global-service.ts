@@ -4,12 +4,13 @@ import { PaginatedResponse } from 'src/types/PaginatedResponse';
 import { assignFilters, FILTERS, rawQuery } from './query.utils';
 import { featherify } from './featherify';
 import options from './options';
+import { InternalQueryOption } from 'src/types/QueryOptions';
 
 export class GlobalService<T, TDocument> {
   constructor(private readonly model: Model<TDocument>) {}
 
   async _find(
-    query: Record<string, any> = {},
+    query: InternalQueryOption<T>,
     findOptions = {
       handleSoftDelete: true,
     },

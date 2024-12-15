@@ -92,5 +92,3 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     return await this.client.ttl(key);
   }
 }
-
-
