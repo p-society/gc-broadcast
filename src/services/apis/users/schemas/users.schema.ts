@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import EnsureObjectId from 'src/common/EnsureObjectId';
 
 export type UsersDocument = HydratedDocument<Users>;
 
@@ -101,6 +102,7 @@ export class Users {
     type: Types.ObjectId,
     ref: Users.name,
     index: true,
+    set: EnsureObjectId,
   })
   deletedBy: Types.ObjectId;
 
@@ -111,7 +113,7 @@ export class Users {
 
   @Prop({
     type: Types.ObjectId,
-    auto: true, // Automatically generated ObjectId
+    auto: true, // Automatically generated ObjectId,
   })
   _id: Types.ObjectId;
 }
