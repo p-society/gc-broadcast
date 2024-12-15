@@ -9,43 +9,43 @@ const getController = (Name, name, url) => `import {
   Query,
 } from '@nestjs/common';
 import { ${Name}Service } from './${name}.service';
-import { Create${Name}Dto } from './dto/create-${name}.dto';
-import { ${Name} } from './schemas/${name}.schema';
-import { PaginatedResponse } from '../types/PaginatedResponse';
+import { Create${Name}DTO, Patch${Name}DTO } from './dto/${name}.dto';
+import { ModifyBody, setCreatedBy } from 'src/decorators/ModifyBody.decorator';
+import { User } from '../users/decorator/user.decorator';
 
 @Controller('${url}')
 export class ${Name}Controller {
   constructor(private readonly ${name}Service: ${Name}Service) {}
 
-  @Post()
-  async create(@Body() create${Name}Dto: Create${Name}Dto) {
-    return await this.${name}Service.create(create${Name}Dto);
-  }
-
   @Get()
-  async findAll(
-    @Query('$skip') $skip: string,
-    @Query('$limit') $limit: string,
-  ): Promise<PaginatedResponse<${Name}>> {
-    return this.${name}Service.findAll($limit, $skip);
+  async find(@Query() query: Record<string,any>) {
+    return await this.${name}Service._find(query);
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<${Name}> {
-    return this.${name}Service.findOne(id);
+  @Get('/:id?')
+  async get(@Query() query: Record<string,any>, @Param('id') id: string) {
+    return await this.${name}Service._get(id, query);
   }
-  
-  @Patch(':id')
-  async patch(
-    @Param('id') id: string,
-    @Body() update${Name}Dto: Create${Name}Dto,
+
+  @Post()
+  async create(
+    @ModifyBody(setCreatedBy()) create${Name}Dto: Create${Name}DTO
   ) {
-    return await this.${name}Service.patch(id, update${Name}Dto);
+    return await this.${name}Service._create(create${Name}Dto);
   }
 
-  @Delete(':id')
-  async delete(@Param('id') id: string) {
-    return this.${name}Service.delete(id);
+  @Patch('/:id?')
+  async patch(
+    @Query() query,
+    @Body() patch${Name}Dto: Patch${Name}DTO,
+    @Param('id') id,
+  ) {
+    return await this.${name}Service._patch(id, patch${Name}Dto, query);
+  }
+
+  @Delete('/:id?')
+  async delete(@Param('id') id, @Query() query, @User() user) {
+    return await this.${name}Service._remove(id, query, user);
   }
 }
 `;
