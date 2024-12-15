@@ -7,45 +7,100 @@ export type UsersDocument = HydratedDocument<Users>;
   timestamps: true,
 })
 export class Users {
-  @Prop({ trim: true })
-  firstName?: string;
+  @Prop({
+    type: String,
+    trim: true,
+    required: true,
+    minlength: 2,
+    maxlength: 50,
+  })
+  firstName: string;
 
-  @Prop({ trim: true })
+  @Prop({
+    type: String,
+    trim: true,
+    minlength: 2,
+    maxlength: 50,
+  })
   middleName?: string;
 
-  @Prop({ trim: true })
-  lastName?: string;
+  @Prop({
+    type: String,
+    trim: true,
+    required: true,
+    minlength: 2,
+    maxlength: 50,
+  })
+  lastName: string;
 
-  @Prop({ trim: true })
+  @Prop({
+    type: String,
+    trim: true,
+    required: true,
+    unique: true,
+    index: true,
+    match: /^[0-9]{10}$/,
+  })
   phone: string;
 
-  @Prop({ trim: true })
+  @Prop({
+    type: String,
+    trim: true,
+    required: true,
+    unique: true,
+    lowercase: true,
+    match: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    index: true,
+  })
   email: string;
 
-  @Prop({ trim: true })
+  @Prop({
+    type: String,
+    trim: true,
+    required: true,
+    enum: ['male', 'female', 'other'],
+  })
   gender: string;
 
-  @Prop({ trim: true })
+  @Prop({
+    type: String,
+    trim: true,
+    required: true,
+  })
   batch: string;
 
-  @Prop({ trim: true })
+  @Prop({
+    type: String,
+    trim: true,
+    required: true,
+  })
   branch: string;
 
-  @Prop({ trim: true })
+  @Prop({
+    type: String,
+    required: true,
+    select: false, // Exclude from queries by default
+  })
   password: string;
 
   @Prop({
     type: Types.ObjectId,
     ref: Users.name,
+    index: true, // Index for faster queries
   })
   createdBy: Types.ObjectId;
 
-  @Prop({ default: false })
+  @Prop({
+    type: Boolean,
+    default: false,
+    index: true,
+  })
   deleted: boolean;
 
   @Prop({
     type: Types.ObjectId,
     ref: Users.name,
+    index: true,
   })
   deletedBy: Types.ObjectId;
 
@@ -53,7 +108,12 @@ export class Users {
     type: Date,
   })
   deletedAt: Date;
-  _id: any;
+
+  @Prop({
+    type: Types.ObjectId,
+    auto: true, // Automatically generated ObjectId
+  })
+  _id: Types.ObjectId;
 }
 
 export const UsersSchema = SchemaFactory.createForClass(Users);
