@@ -10,7 +10,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ModifyBody, setCreatedBy } from 'src/decorators/ModifyBody.decorator';
 import { User } from '../users/decorator/user.decorator';
 import { Users } from './schemas/users.schema';
 import { OtpService } from '../otp/otp.service';
@@ -48,11 +47,11 @@ export class UsersController {
       ...createUsersDto,
       password,
     })) as Users;
-    
+
     await this.removeOTP(createUsersDto.email);
     const sanitizedUser = this.usersService.sanitizeUser(user);
     const payload = { sub: { id: user._id }, user };
-    
+
     return {
       user: sanitizedUser,
       accessToken: await this.jwtService.signAsync(payload),
