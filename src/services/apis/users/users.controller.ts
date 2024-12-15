@@ -48,9 +48,11 @@ export class UsersController {
       ...createUsersDto,
       password,
     })) as Users;
+    
     await this.removeOTP(createUsersDto.email);
     const sanitizedUser = this.usersService.sanitizeUser(user);
     const payload = { sub: { id: user._id }, user };
+    
     return {
       user: sanitizedUser,
       accessToken: await this.jwtService.signAsync(payload),
