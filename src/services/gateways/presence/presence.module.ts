@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { PresenceGatewayv1 } from './presence.gateway';
 import { RedisService } from 'src/services/apis/redis/redis.service';
 import { RedisModule } from 'src/services/apis/redis/redis.module';
+import { PresenceGateway } from './presence.gateway';
 
 @Module({
   imports: [RedisModule],
-  providers: [PresenceGatewayv1, RedisService],
+  providers: [PresenceGateway, RedisService],
 })
 export class PresenceModule {}

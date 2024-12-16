@@ -6,7 +6,9 @@ import {
 } from '@nestjs/common';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { MongooseError } from 'mongoose';
+import { MongoServerError } from 'mongodb';
 import { ZodError } from 'zod';
+import { handleMongoError } from './mongo-error.filter';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -14,17 +16,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
-
     if (exception instanceof HttpException) {
       return response
         .status(exception.getStatus())
         .json(exception.getResponse());
-    }
-
-    if (exception instanceof ZodError) {
-      const error = new BadRequestException(exception);
-
-      return response.status(error.getStatus()).json(error.getResponse());
     }
 
     if (exception instanceof MongooseError) {
@@ -33,7 +28,18 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       return response.status(error.getStatus()).json(error.getResponse());
     }
 
-    console.error(exception);
+    if (exception instanceof ZodError) {
+      const error = new BadRequestException(exception);
+
+      return response.status(error.getStatus()).json(error.getResponse());
+    }
+
+    if (exception instanceof MongoServerError) {
+      const error = new BadRequestException(exception);
+      return response
+        .status(error.getStatus())
+        .json(handleMongoError(exception));
+    }
 
     response.status(500).json({
       statusCode: 500,
