@@ -1,6 +1,6 @@
 import { Prop } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
-import { Users } from 'src/services/apis/users/schemas/users.schema';
+import EnsureObjectId from './EnsureObjectId';
 
 export class SoftDeleteSchema {
   @Prop({ default: false })
@@ -8,7 +8,8 @@ export class SoftDeleteSchema {
 
   @Prop({
     type: Types.ObjectId,
-    ref: Users.name,
+    ref: 'Users',
+    set: EnsureObjectId,
   })
   deletedBy: Types.ObjectId;
 

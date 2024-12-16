@@ -23,7 +23,7 @@ import { PresenceSocketEvents } from '../constants/presence.events';
   },
   namespace: 'v1/events',
 })
-export class EventsGateway
+export class PresenceGateway
   implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
 {
   @WebSocketServer()

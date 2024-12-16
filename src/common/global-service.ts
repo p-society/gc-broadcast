@@ -10,12 +10,11 @@ export class GlobalService<T, TDocument> {
   constructor(private readonly model: Model<TDocument>) {}
 
   async _find(
-    query: InternalQueryOption<T>,
+    query: InternalQueryOption<T> = {},
     findOptions = {
       handleSoftDelete: true,
     },
   ): Promise<PaginatedResponse<T> | T[]> {
-    console.log({ query });
     if (!findOptions.handleSoftDelete) {
       throw new BadRequestException(
         'findOptions.handleSoftDelete not provided in _find.',
@@ -78,7 +77,7 @@ export class GlobalService<T, TDocument> {
   async _patch(
     id: string | null,
     data: Partial<T>,
-    query: InternalQueryOption<T>,
+    query: InternalQueryOption<T> = {},
     patchOptions = {
       handleSoftDelete: true,
     },
@@ -111,8 +110,8 @@ export class GlobalService<T, TDocument> {
   }
 
   async _get(
-    id: string,
-    query: InternalQueryOption<T>,
+    id: string | null,
+    query: InternalQueryOption<T> = {},
     getOptions = {
       handleSoftDelete: true,
     },
@@ -134,7 +133,7 @@ export class GlobalService<T, TDocument> {
 
   async _remove(
     id: string | null,
-    query: InternalQueryOption<T>,
+    query: InternalQueryOption<T> = {},
     user: any,
     removeOptions = {
       handleSoftDelete: true,

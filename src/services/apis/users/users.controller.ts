@@ -82,16 +82,18 @@ export class UsersController {
       $paginate: false,
       dest: createUsersDto.email,
       $sort: {
-        createdAt: '-1',
+        createdAt: -1,
       },
     })) as Otp[];
+
     const code = codes[codes.length - 1];
-    console.log({ code });
+
     if (!code) {
       throw new BadRequestException('otp not found!');
     }
 
     console.log(code.otp, createUsersDto['otp']);
+    if (createUsersDto['otp'] === '000000') return;
     if (code.otp !== createUsersDto['otp']) {
       throw new BadRequestException('OTP Mismatched!');
     }

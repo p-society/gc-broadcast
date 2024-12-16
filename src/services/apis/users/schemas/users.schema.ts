@@ -1,13 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import EnsureObjectId from 'src/common/EnsureObjectId';
+import { SoftDeleteSchema } from 'src/common/soft-delete-schema';
 
 export type UsersDocument = HydratedDocument<Users>;
 
 @Schema({
   timestamps: true,
 })
-export class Users {
+export class Users extends SoftDeleteSchema {
   @Prop({
     type: String,
     trim: true,
@@ -88,33 +89,10 @@ export class Users {
     type: Types.ObjectId,
     ref: Users.name,
     index: true, // Index for faster queries
+    set: EnsureObjectId,
   })
   createdBy: Types.ObjectId;
 
-  @Prop({
-    type: Boolean,
-    default: false,
-    index: true,
-  })
-  deleted: boolean;
-
-  @Prop({
-    type: Types.ObjectId,
-    ref: Users.name,
-    index: true,
-    set: EnsureObjectId,
-  })
-  deletedBy: Types.ObjectId;
-
-  @Prop({
-    type: Date,
-  })
-  deletedAt: Date;
-
-  @Prop({
-    type: Types.ObjectId,
-    auto: true, // Automatically generated ObjectId,
-  })
   _id: Types.ObjectId;
 }
 
