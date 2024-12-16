@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { Model, FilterQuery, UpdateQuery, AnyKeys } from 'mongoose';
+import { Model, FilterQuery, UpdateQuery, AnyKeys, Types } from 'mongoose';
 import { PaginatedResponse } from 'src/types/PaginatedResponse';
 import { assignFilters, FILTERS, rawQuery } from './query.utils';
 import { featherify } from './featherify';
@@ -11,16 +11,9 @@ export class GlobalService<T, TDocument> {
 
   async _find(
     query: InternalQueryOption<T> = {},
-    findOptions = {
-      handleSoftDelete: true,
-    },
+    findOptions = options,
   ): Promise<PaginatedResponse<T> | T[]> {
-    if (!findOptions.handleSoftDelete) {
-      throw new BadRequestException(
-        'findOptions.handleSoftDelete not provided in _find.',
-      );
-    }
-    query['deleted'] = { $ne: true };
+    query[options.deleteKey] = { $ne: true };
 
     const filters = assignFilters({}, query, FILTERS, {});
     const searchQuery = rawQuery(query);
@@ -78,17 +71,9 @@ export class GlobalService<T, TDocument> {
     id: string | null,
     data: Partial<T>,
     query: InternalQueryOption<T> = {},
-    patchOptions = {
-      handleSoftDelete: true,
-    },
+    patchOptions = options,
   ): Promise<T | T[] | null> {
-    if (!patchOptions.handleSoftDelete) {
-      throw new BadRequestException(
-        'patchOptions.handleSoftDelete not provided in _patch.',
-      );
-    }
-    query['deleted'] = { $ne: true };
-
+    query[options.deleteKey] = { $ne: true };
     const searchQuery: FilterQuery<TDocument> = id
       ? { _id: id, ...rawQuery(query) }
       : rawQuery(query);
@@ -112,16 +97,9 @@ export class GlobalService<T, TDocument> {
   async _get(
     id: string | null,
     query: InternalQueryOption<T> = {},
-    getOptions = {
-      handleSoftDelete: true,
-    },
+    getOptions = options,
   ): Promise<T | null> {
-    if (!getOptions.handleSoftDelete) {
-      throw new BadRequestException(
-        'getOptions.handleSoftDelete not provided in _get.',
-      );
-    }
-    query['deleted'] = { $ne: true };
+    query[options.deleteKey] = { $ne: true };
 
     const searchQuery: FilterQuery<TDocument> = {
       ...rawQuery(query),
@@ -135,9 +113,7 @@ export class GlobalService<T, TDocument> {
     id: string | null,
     query: InternalQueryOption<T> = {},
     user: any,
-    removeOptions = {
-      handleSoftDelete: true,
-    },
+    removeOptions = options,
   ): Promise<T | T[]> {
     const searchQuery: FilterQuery<TDocument> = id
       ? { _id: id, ...rawQuery(query) }
@@ -149,9 +125,9 @@ export class GlobalService<T, TDocument> {
       await this._patch(
         id,
         {
-          deleted: true,
-          deletedBy: user._id,
-          deletedAt: new Date(),
+          [options.deleteKey]: true,
+          [options.deletedByKey]: new Types.ObjectId(user._id),
+          [options.deletedAtKey]: new Date(),
         } as unknown as Partial<T>,
         searchQuery as InternalQueryOption<T>,
       );
