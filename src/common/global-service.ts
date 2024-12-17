@@ -139,4 +139,12 @@ export class GlobalService<T, TDocument> {
       : await this.model.deleteMany(searchQuery).exec();
     return data;
   }
+
+  async getCount(filter: Record<string,any>) {
+    Object.keys(filter).forEach((k) => {
+      const val = filter[k];
+      if(Types.ObjectId.isValid(val)) filter[k] = new Types.ObjectId(val);
+    });
+    return await this.model.countDocuments(filter); 
+  }
 }
