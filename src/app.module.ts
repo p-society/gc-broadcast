@@ -11,6 +11,8 @@ import { RedisModule } from './services/apis/redis/redis.module';
 import { UsersModule } from './services/apis/users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SendOtpModule } from './services/apis/sendOtp/sendOtp.module';
+import { ReactionsModule } from './services/apis/reactions/reactions.module';
+import { ProfilesModule } from './services/apis/profiles/profiles.module';
 
 @Module({
   imports: [
@@ -31,6 +33,8 @@ import { SendOtpModule } from './services/apis/sendOtp/sendOtp.module';
     UsersModule,
     SendOtpModule,
     AdapterModule,
+    ProfilesModule,
+    ReactionsModule
   ],
   controllers: [AppController],
   providers: [
