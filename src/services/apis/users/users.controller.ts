@@ -115,7 +115,7 @@ export class UsersController {
         defaultPagination: false,
         defaultLimit: 0,
         defaultSkip: 0,
-        multi: false
+        multi: false,
       },
     );
   }
