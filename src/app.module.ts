@@ -12,6 +12,7 @@ import { UsersModule } from './services/apis/users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SendOtpModule } from './services/apis/sendOtp/sendOtp.module';
 import { ReactionsModule } from './services/apis/reactions/reactions.module';
+import { KafkaModule } from './services/kafka/kafka.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ReactionsModule } from './services/apis/reactions/reactions.module';
     SendOtpModule,
     AdapterModule,
     ReactionsModule,
+    KafkaModule,
   ],
   controllers: [AppController],
   providers: [
