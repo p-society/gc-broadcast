@@ -1,38 +1,72 @@
-import { z } from 'zod';
+import { date, z } from 'zod';
 import { Types } from 'mongoose';
 
 export const CreateProfilesValidation = z.object({
-  name: z.string().optional(),
+  sport: z.enum(['Football', 'Cricket', 'Badminton', 'Basketball', 'Volleyball']),
+  user: z
+    .string()
+    .refine((val) => Types.ObjectId.isValid(val), {
+      message: 'Invalid user ID',
+    }),
+
+  position: z.string().trim(),
+  approved: z.boolean().default(false),
+  experience: z.number().default(0),
+  active: z.boolean().default(true),
+  approvedBy: z
+    .string()
+    .refine((val) => Types.ObjectId.isValid(val), {
+      message: 'Invalid user ID',
+    }),
+
+  achievements: z.array(
+    z.object({
+      achievementTitle: z.string().trim().max(30).min(3),
+      date: z.date().default(new Date()),
+      description: z.string().max(150).min(25).optional(),
+    })
+  ).optional(),
+
   createdBy: z
     .string()
     .refine((val) => Types.ObjectId.isValid(val), {
-      message: 'Invalid creator ID',
+      message: "invalid user ID"
     })
-    .optional(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
-  deleted: z.boolean().optional().default(false),
-  deletedBy: z
-    .string()
-    .refine((val) => Types.ObjectId.isValid(val), {
-      message: 'Invalid deleter ID',
-    })
-    .optional(),
-  deletedAt: z.date().optional(),
+
+
 });
 
 export const PatchProfilesValidation = z.object({
-  name: z.string().optional(),
-  updatedAt: z.date().optional(),
-  createdAt: z.date().optional(),
-  deleted: z.boolean().optional(),
-  deletedBy: z
+  sport: z.enum(['Football', 'Cricket', 'Badminton', 'Basketball', 'Volleyball']),
+  user: z
     .string()
     .refine((val) => Types.ObjectId.isValid(val), {
-      message: 'Invalid deleter ID',
+      message: 'Invalid user ID',
+    }),
+
+  position: z.string().trim(),
+  approved: z.boolean().default(false),
+  experience: z.number().default(0),
+  active: z.boolean().default(true),
+  approvedBy: z
+    .string()
+    .refine((val) => Types.ObjectId.isValid(val), {
+      message: 'Invalid user ID',
+    }),
+
+  achievements: z.array(
+    z.object({
+      achievementTitle: z.string().trim().max(30).min(3),
+      date: z.date().default(new Date()),
+      description: z.string().max(150).min(25).optional(),
     })
-    .optional(),
-  deletedAt: z.date().optional(),
+  ).optional(),
+
+  createdBy: z
+    .string()
+    .refine((val) => Types.ObjectId.isValid(val), {
+      message: "invalid user ID"
+    })
 });
 
 export const RemoveProfilesValidation = z.object({
