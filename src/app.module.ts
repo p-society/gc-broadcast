@@ -12,6 +12,7 @@ import { UsersModule } from './services/apis/users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SendOtpModule } from './services/apis/sendOtp/sendOtp.module';
 import { ReactionsModule } from './services/apis/reactions/reactions.module';
+import { ProfilesModule } from './services/apis/profiles/profiles.module';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { ReactionsModule } from './services/apis/reactions/reactions.module';
     UsersModule,
     SendOtpModule,
     AdapterModule,
-    ReactionsModule,
+    ProfilesModule,
+    ReactionsModule
   ],
   controllers: [AppController],
   providers: [
