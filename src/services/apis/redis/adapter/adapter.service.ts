@@ -9,13 +9,13 @@ export class RedisIoAdapter extends IoAdapter {
   private adapterConstructor: ReturnType<typeof createAdapter>;
   // private readonly configService: ConfigService;
 
-  REDIS_HOST = 'redis-14197.c257.us-east-1-3.ec2.redns.redis-cloud.com';
-  REDIS_PORT = 14197;
-  REDIS_PASSWORD = 'hyQ78TCrEFCaE9LC8rVzbF4OLk8teIBb';
+  REDIS_HOST = process.env.REDIS_HOST;
+  REDIS_PORT = Number(process.env.REDIS_PORT);
+  //REDIS_PASSWORD = process.env.REDIS_PASSWORD;
 
   async connectToRedis(): Promise<void> {
     const pubClient = createClient({
-      password: this.REDIS_PASSWORD,
+      //password: this.REDIS_PASSWORD,
       socket: {
         host: this.REDIS_HOST,
         port: this.REDIS_PORT,
