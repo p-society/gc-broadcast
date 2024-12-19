@@ -5,6 +5,7 @@ import { assignFilters, FILTERS, rawQuery } from './query.utils';
 import { featherify } from './featherify';
 import options from './options';
 import { InternalQueryOption } from 'src/types/QueryOptions';
+import { processFilter } from './process-filters';
 
 export class GlobalService<T, TDocument> {
   constructor(private readonly model: Model<TDocument>) {}
@@ -140,11 +141,8 @@ export class GlobalService<T, TDocument> {
     return data;
   }
 
-  async getCount(filter: Record<string,any>) {
-    Object.keys(filter).forEach((k) => {
-      const val = filter[k];
-      if(Types.ObjectId.isValid(val)) filter[k] = new Types.ObjectId(val);
-    });
-    return await this.model.countDocuments(filter); 
+  async getCount(filter: Record<string, any>) {
+    processFilter(filter);
+    return await this.model.countDocuments(filter);
   }
 }
