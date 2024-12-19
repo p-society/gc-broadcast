@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ReactionService } from './reactions.service';
 import { processReaction } from './reaction.helper';
 
-
 describe('ReactionService', () => {
   let service: ReactionService;
 
@@ -40,7 +39,7 @@ describe('ReactionService', () => {
     it('should throw an error if emoji is not a string', () => {
       const reaction = { emoji: 123 as unknown as string, sport: 'football' };
 
-      expect(() =>processReaction(reaction)).toThrowError(
+      expect(() => processReaction(reaction)).toThrowError(
         'Invalid emoji: Must be a non-empty string',
       );
     });
