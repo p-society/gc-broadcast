@@ -109,6 +109,13 @@ export class UsersController {
       null,
       {
         handleSoftDelete: false,
+        deleteKey: '',
+        deletedByKey: '',
+        deletedAtKey: '',
+        defaultPagination: false,
+        defaultLimit: 0,
+        defaultSkip: 0,
+        multi: false,
       },
     );
   }

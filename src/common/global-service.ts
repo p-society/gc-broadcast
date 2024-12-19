@@ -5,6 +5,7 @@ import { assignFilters, FILTERS, rawQuery } from './query.utils';
 import { featherify } from './featherify';
 import options from './options';
 import { InternalQueryOption } from 'src/types/QueryOptions';
+import { processFilter } from './process-filters';
 
 export class GlobalService<T, TDocument> {
   constructor(private readonly model: Model<TDocument>) {}
@@ -138,5 +139,10 @@ export class GlobalService<T, TDocument> {
       ? await this.model.deleteOne(searchQuery).exec()
       : await this.model.deleteMany(searchQuery).exec();
     return data;
+  }
+
+  async getCount(filter: Record<string, any>) {
+    processFilter(filter);
+    return await this.model.countDocuments(filter);
   }
 }

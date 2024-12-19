@@ -28,7 +28,6 @@ export class PresenceGateway
 {
   @WebSocketServer()
   server: Server;
-
   constructor(
     private readonly userService: UsersService,
     private readonly configService: ConfigService,
