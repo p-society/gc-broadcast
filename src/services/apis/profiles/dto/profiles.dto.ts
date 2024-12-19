@@ -1,8 +1,10 @@
 import { date, z } from 'zod';
 import { Types } from 'mongoose';
+import SportsEnum from 'src/constants/sports-enum';
+
 
 export const CreateProfilesValidation = z.object({
-  sport: z.enum(['Football', 'Cricket', 'Badminton', 'Basketball', 'Volleyball']),
+  sport: z.nativeEnum(SportsEnum),
   user: z
     .string()
     .refine((val) => Types.ObjectId.isValid(val), {
@@ -37,27 +39,27 @@ export const CreateProfilesValidation = z.object({
 });
 
 export const PatchProfilesValidation = z.object({
-  sport: z.enum(['Football', 'Cricket', 'Badminton', 'Basketball', 'Volleyball']),
+  sport: z.nativeEnum(SportsEnum).optional(),
   user: z
     .string()
     .refine((val) => Types.ObjectId.isValid(val), {
       message: 'Invalid user ID',
-    }),
+    }).optional(),
 
-  position: z.string().trim(),
-  approved: z.boolean().default(false),
-  experience: z.number().default(0),
-  active: z.boolean().default(true),
+  position: z.string().trim().optional(),
+  approved: z.boolean().optional(),
+  experience: z.number().optional(),
+  active: z.boolean().optional(),
   approvedBy: z
     .string()
     .refine((val) => Types.ObjectId.isValid(val), {
       message: 'Invalid user ID',
-    }),
+    }).optional(),
 
   achievements: z.array(
     z.object({
       achievementTitle: z.string().trim().max(30).min(3),
-      date: z.date().default(new Date()),
+      date: z.date(),
       description: z.string().max(150).min(25).optional(),
     })
   ).optional(),
@@ -66,7 +68,7 @@ export const PatchProfilesValidation = z.object({
     .string()
     .refine((val) => Types.ObjectId.isValid(val), {
       message: "invalid user ID"
-    })
+    }).optional()
 });
 
 export const RemoveProfilesValidation = z.object({

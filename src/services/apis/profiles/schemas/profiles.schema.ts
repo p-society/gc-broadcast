@@ -3,6 +3,8 @@ import { HydratedDocument, Types } from 'mongoose';
 import { SoftDeleteSchema } from 'src/common/soft-delete-schema';
 import EnsureObjectId from 'src/common/EnsureObjectId';
 import { Users } from '../../users/schemas/users.schema';
+import SportsEnum from 'src/constants/sports-enum';
+
 
 export type ProfilesDocument = HydratedDocument<Profiles>;
 
@@ -12,10 +14,10 @@ export type ProfilesDocument = HydratedDocument<Profiles>;
 export class Profiles extends SoftDeleteSchema {
   @Prop({
     type: String,
-    enum: ['Football', 'Cricket', 'Badminton', 'Basketball', 'Volleyball'],
+    enum : Object.values(SportsEnum),
     required: true,
   })
-  sport: string;
+  sport: SportsEnum;
 
 
   @Prop({
@@ -29,7 +31,6 @@ export class Profiles extends SoftDeleteSchema {
 
   @Prop({
     type: String,
-    required: true,
     trim: true,
   })
   position: string;
