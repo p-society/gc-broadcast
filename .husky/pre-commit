@@ -1,2 +1,7 @@
+branch_name=$(git rev-parse --abbrev-ref HEAD)
+
 npx lint-staged
-yarn env dev
+
+if [ "$branch_name" = "dev" ]; then
+  yarn env dev
+fi
