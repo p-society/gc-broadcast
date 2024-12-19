@@ -1,0 +1,138 @@
+import {
+  WebSocketGateway,
+  OnGatewayInit,
+  WebSocketServer,
+  SubscribeMessage,
+  MessageBody,
+  ConnectedSocket,
+} from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
+import { ReactionService } from '../../apis/reactions/reactions.service';
+import { Logger } from '@nestjs/common';
+
+/**
+ * Constants for event names to avoid hardcoding.
+ */
+const EVENTS = {
+  SEND_REACTION: 'sendReaction',
+  ERROR: 'error',
+  RECEIVE_REACTION: (sport: string) => `receiveReaction_${sport}`,
+};
+
+@WebSocketGateway({
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
+  namespace: '/reactions',
+})
+export class ReactionGateway implements OnGatewayInit {
+  private readonly logger = new Logger(ReactionGateway.name);
+
+  @WebSocketServer()
+  server: Server;
+
+  constructor(private readonly reactionService: ReactionService) {}
+
+  /**
+   * Triggered when the gateway is initialized.
+   */
+  afterInit() {
+    this.logInfo('WebSocket Gateway Initialized');
+  }
+
+  /**
+   * Handles new client connections.
+   * @param client - The connected client socket.
+   */
+  handleConnection(client: Socket) {
+    this.logInfo(`Client connected: ${client.id}`);
+  }
+
+  /**
+   * Handles client disconnections.
+   * @param client - The disconnected client socket.
+   */
+  handleDisconnect(client: Socket) {
+    this.logInfo(`Client disconnected: ${client.id}`);
+  }
+
+  /**
+   * Handles incoming reactions sent by a client.
+   * @param body - The reaction payload (emoji and sport).
+   * @param client - The connected client socket.
+   */
+  @SubscribeMessage(EVENTS.SEND_REACTION)
+  handleReaction(
+    @MessageBody() body: { emoji: string; sport: string },
+    @ConnectedSocket() client: Socket,
+  ): void {
+    this.logInfo(`Received raw message: ${JSON.stringify(body)}`);
+
+    try {
+      this.validateReactionPayload(body);
+
+      const processedReaction = this.reactionService.processReaction(body);
+
+      // Broadcast to the sport-specific channel
+      const broadcastChannel = EVENTS.RECEIVE_REACTION(processedReaction.sport);
+      this.server.emit(broadcastChannel, {
+        emoji: processedReaction.emoji,
+        sport: processedReaction.sport,
+        by: client.id,
+      });
+
+      this.logInfo(
+        `Reaction broadcasted to sport channel: ${broadcastChannel}`,
+      );
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'An unknown error occurred';
+      this.handleError(client, errorMessage);
+    }
+  }
+
+  /**
+   * Validates the reaction payload.
+   * @param payload - The payload to validate.
+   * @throws Will throw an error if validation fails.
+   */
+  private validateReactionPayload(payload: {
+    emoji: string;
+    sport: string;
+  }): void {
+    if (!payload.emoji || typeof payload.emoji !== 'string') {
+      throw new Error('Invalid payload: Emoji must be a non-empty string.');
+    }
+
+    if (!payload.sport || typeof payload.sport !== 'string') {
+      throw new Error('Invalid payload: Sport must be a non-empty string.');
+    }
+  }
+
+  /**
+   * Sends a standardized error response to the client.
+   * @param client - The client socket.
+   * @param errorMessage - The error message to send.
+   */
+  private handleError(client: Socket, errorMessage: string): void {
+    this.logError(errorMessage);
+    client.emit(EVENTS.ERROR, { message: errorMessage });
+  }
+
+  /**
+   * Logs informational messages with a consistent format.
+   * @param message - The message to log.
+   */
+  private logInfo(message: string): void {
+    this.logger.log(`[INFO]: ${message}`);
+  }
+
+  /**
+   * Logs error messages with a consistent format.
+   * @param message - The message to log.
+   */
+  private logError(message: string): void {
+    this.logger.error(`[ERROR]: ${message}`);
+  }
+}

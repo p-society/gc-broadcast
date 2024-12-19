@@ -8,7 +8,7 @@ export type InternalQueryOption<T = any> = {
   $skip?: number | string;
 
   $populate?: string | object | Array<string | object>;
-  
+
   $paginate?: true | false | 'true' | 'false';
 
   $or?: Array<Partial<Record<keyof T, any>>>;
