@@ -5,26 +5,27 @@ import {
   SubscribeMessage,
   MessageBody,
   ConnectedSocket,
-} from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+} from "@nestjs/websockets";
+import { Server, Socket } from "socket.io";
 import { ReactionService } from '../../apis/reactions/reactions.service';
-import { Logger } from '@nestjs/common';
+import { Logger } from "@nestjs/common";
+import { processReaction } from '../../apis/reactions/reaction.helper';
 
 /**
  * Constants for event names to avoid hardcoding.
  */
 const EVENTS = {
-  SEND_REACTION: 'sendReaction',
-  ERROR: 'error',
+  SEND_REACTION: "sendReaction",
+  ERROR: "error",
   RECEIVE_REACTION: (sport: string) => `receiveReaction_${sport}`,
 };
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
+    origin: "*",
+    methods: ["GET", "POST"],
   },
-  namespace: '/reactions',
+  namespace: "/reactions",
 })
 export class ReactionGateway implements OnGatewayInit {
   private readonly logger = new Logger(ReactionGateway.name);
@@ -38,7 +39,7 @@ export class ReactionGateway implements OnGatewayInit {
    * Triggered when the gateway is initialized.
    */
   afterInit() {
-    this.logInfo('WebSocket Gateway Initialized');
+    this.logInfo("WebSocket Gateway Initialized");
   }
 
   /**
@@ -70,9 +71,7 @@ export class ReactionGateway implements OnGatewayInit {
     this.logInfo(`Received raw message: ${JSON.stringify(body)}`);
 
     try {
-      this.validateReactionPayload(body);
-
-      const processedReaction = this.reactionService.processReaction(body);
+      const processedReaction = processReaction(body);
 
       // Broadcast to the sport-specific channel
       const broadcastChannel = EVENTS.RECEIVE_REACTION(processedReaction.sport);
@@ -87,28 +86,12 @@ export class ReactionGateway implements OnGatewayInit {
       );
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'An unknown error occurred';
+        error instanceof Error ? error.message : "An unknown error occurred";
       this.handleError(client, errorMessage);
     }
   }
 
-  /**
-   * Validates the reaction payload.
-   * @param payload - The payload to validate.
-   * @throws Will throw an error if validation fails.
-   */
-  private validateReactionPayload(payload: {
-    emoji: string;
-    sport: string;
-  }): void {
-    if (!payload.emoji || typeof payload.emoji !== 'string') {
-      throw new Error('Invalid payload: Emoji must be a non-empty string.');
-    }
-
-    if (!payload.sport || typeof payload.sport !== 'string') {
-      throw new Error('Invalid payload: Sport must be a non-empty string.');
-    }
-  }
+ 
 
   /**
    * Sends a standardized error response to the client.
