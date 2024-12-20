@@ -9,10 +9,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Processor(REACTION_STREAM_QUEUE)
 export class ReactionStreamProcessor extends WorkerHost {
-  constructor(
-    private readonly reactionGateway: ReactionGateway,
-    private readonly internalEventEmitter: EventEmitter2,
-  ) {
+  constructor(private readonly internalEventEmitter: EventEmitter2) {
     super();
   }
 
