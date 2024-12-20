@@ -5,7 +5,6 @@ import EnsureObjectId from 'src/common/EnsureObjectId';
 import { Users } from '../../users/schemas/users.schema';
 import SportsEnum from 'src/constants/sports-enum';
 
-
 export type ProfilesDocument = HydratedDocument<Profiles>;
 
 @Schema({
@@ -14,11 +13,10 @@ export type ProfilesDocument = HydratedDocument<Profiles>;
 export class Profiles extends SoftDeleteSchema {
   @Prop({
     type: String,
-    enum : Object.values(SportsEnum),
+    enum: Object.values(SportsEnum),
     required: true,
   })
   sport: SportsEnum;
-
 
   @Prop({
     type: Types.ObjectId,
@@ -88,11 +86,10 @@ export class Profiles extends SoftDeleteSchema {
     type: Types.ObjectId,
     ref: Users.name,
     index: true,
-    required:true,
-    set: EnsureObjectId
+    required: true,
+    set: EnsureObjectId,
   })
   createdBy: Types.ObjectId;
-
 
   _id: Types.ObjectId;
 }

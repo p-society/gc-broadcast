@@ -24,7 +24,7 @@ export class ProfilesController {
 
   @Get('/:id?')
   async get(@Query() query: Record<string, any>, @Param('id') id: string) {
-    return  await this.profilesService._get(id, query);
+    return await this.profilesService._get(id, query);
   }
 
   @Post()

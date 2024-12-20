@@ -2,40 +2,33 @@ import { date, z } from 'zod';
 import { Types } from 'mongoose';
 import SportsEnum from 'src/constants/sports-enum';
 
-
 export const CreateProfilesValidation = z.object({
   sport: z.nativeEnum(SportsEnum),
-  user: z
-    .string()
-    .refine((val) => Types.ObjectId.isValid(val), {
-      message: 'Invalid user ID',
-    }),
+  user: z.string().refine((val) => Types.ObjectId.isValid(val), {
+    message: 'Invalid user ID',
+  }),
 
   position: z.string().trim(),
   approved: z.boolean().default(false),
   experience: z.number().default(0),
   active: z.boolean().default(true),
-  approvedBy: z
-    .string()
-    .refine((val) => Types.ObjectId.isValid(val), {
-      message: 'Invalid user ID',
-    }),
+  approvedBy: z.string().refine((val) => Types.ObjectId.isValid(val), {
+    message: 'Invalid user ID',
+  }),
 
-  achievements: z.array(
-    z.object({
-      achievementTitle: z.string().trim().max(30).min(3),
-      date: z.date().default(new Date()),
-      description: z.string().max(150).min(25).optional(),
-    })
-  ).optional(),
+  achievements: z
+    .array(
+      z.object({
+        achievementTitle: z.string().trim().max(30).min(3),
+        date: z.date().default(new Date()),
+        description: z.string().max(150).min(25).optional(),
+      }),
+    )
+    .optional(),
 
-  createdBy: z
-    .string()
-    .refine((val) => Types.ObjectId.isValid(val), {
-      message: "invalid user ID"
-    })
-
-
+  createdBy: z.string().refine((val) => Types.ObjectId.isValid(val), {
+    message: 'invalid user ID',
+  }),
 });
 
 export const PatchProfilesValidation = z.object({
@@ -44,7 +37,8 @@ export const PatchProfilesValidation = z.object({
     .string()
     .refine((val) => Types.ObjectId.isValid(val), {
       message: 'Invalid user ID',
-    }).optional(),
+    })
+    .optional(),
 
   position: z.string().trim().optional(),
   approved: z.boolean().optional(),
@@ -54,21 +48,25 @@ export const PatchProfilesValidation = z.object({
     .string()
     .refine((val) => Types.ObjectId.isValid(val), {
       message: 'Invalid user ID',
-    }).optional(),
-
-  achievements: z.array(
-    z.object({
-      achievementTitle: z.string().trim().max(30).min(3),
-      date: z.date(),
-      description: z.string().max(150).min(25).optional(),
     })
-  ).optional(),
+    .optional(),
+
+  achievements: z
+    .array(
+      z.object({
+        achievementTitle: z.string().trim().max(30).min(3),
+        date: z.date(),
+        description: z.string().max(150).min(25).optional(),
+      }),
+    )
+    .optional(),
 
   createdBy: z
     .string()
     .refine((val) => Types.ObjectId.isValid(val), {
-      message: "invalid user ID"
-    }).optional()
+      message: 'invalid user ID',
+    })
+    .optional(),
 });
 
 export const RemoveProfilesValidation = z.object({
