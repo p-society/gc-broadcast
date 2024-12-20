@@ -8,7 +8,7 @@ on:
       - '**/docker-compose.dev.yml'
 
 jobs:
-  build:
+  build_release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -28,17 +28,3 @@ jobs:
         run: |
           docker-compose -f docker-compose.dev.yml build
           docker-compose -f docker-compose.dev.yml push
-
-  release:
-    name: Release pushed tag
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Create release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref_name }}
-        run: |
-          gh release create "$tag" \
-              --repo="$GITHUB_REPOSITORY" \
-              --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
-              --generate-notes
