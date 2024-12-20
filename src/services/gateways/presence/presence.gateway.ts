@@ -12,7 +12,7 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { SocketAuthMiddleware } from 'src/services/apis/auth/middlewares/socket.middleware';
-import { RedisService } from 'src/services/apis/redis/redis.service';
+import { RedisService } from 'src/services/redis/redis.service';
 import { UsersService } from 'src/services/apis/users/users.service';
 import { SocketClient } from 'src/types/SocketClient';
 import { PresenceSocketEvents } from '../constants/presence.events';

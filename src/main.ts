@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { RedisIoAdapter } from './services/apis/redis/adapter/adapter.service';
+import { RedisIoAdapter } from './services/redis/adapter/adapter.service';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 
 async function bootstrap() {

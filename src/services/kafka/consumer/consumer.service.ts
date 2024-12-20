@@ -4,6 +4,8 @@ import { IConsumer } from '../../../types/consumer.interface';
 import { KafkajsConsumer } from './kafkajs.consumer';
 import { kafkaConsumerOptions } from 'src/constants/kafkajs-consumer-options';
 
+export const TOPIC_NAME = 'test.topic';
+
 @Injectable()
 export class ConsumerService implements OnApplicationShutdown {
   private readonly consumers: IConsumer[] = [];
