@@ -9,10 +9,36 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Create a Release
-      uses: elgohr/Github-Release-Action@v5
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        title: MyReleaseMessage
+      - uses: actions/checkout@v3
+
+      - name: Get latest version tag
+        id: get_version
+        run: |
+          # Fetch tags from the repository
+          git fetch --tags
+          # Get the latest tag, if exists, otherwise default to v0.0.0
+          latest_tag=$(git describe --tags --abbrev=0 || echo "v0.0.0")
+          echo "Latest tag: $latest_tag"
+          
+          # Split the version into its components
+          major=$(echo $latest_tag | cut -d. -f1 | tr -d 'v')
+          minor=$(echo $latest_tag | cut -d. -f2)
+          patch=$(echo $latest_tag | cut -d. -f3)
+
+          # Increment the patch version
+          patch=$((patch + 1))
+
+          # Create the new version tag
+          new_version="v$major.$minor.$patch"
+          echo "New version: $new_version"
+          
+          # Set the new version as an output
+          echo "::set-output name=version::$new_version"
+
+      - name: Create a Release
+        uses: elgohr/Github-Release-Action@v5
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          title: Release ${{ steps.get_version.outputs.version }}
+          tag_name: ${{ steps.get_version.outputs.version }}
