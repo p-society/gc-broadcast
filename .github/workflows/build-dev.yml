@@ -29,15 +29,16 @@ jobs:
           docker-compose -f docker-compose.dev.yml build
           docker-compose -f docker-compose.dev.yml push
 
-      - name: Create GitHub Release
-        id: create_release
-        uses: gh action/create-release@v1
-        with:
-          tag_name: "v${{ github.run_number }}"
-          release_name: "Release v${{ github.run_number }}"
-          body: |
-            This release contains the latest Docker images built and pushed for `dev`.
-          draft: false
-          prerelease: false
+  release:
+    name: Release pushed tag
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
+        run: |
+          gh release create "$tag" \
+              --repo="$GITHUB_REPOSITORY" \
+              --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
+              --generate-notes
