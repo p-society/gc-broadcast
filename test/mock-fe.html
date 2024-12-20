@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock Frontend</title>
+    <script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        #logs {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .log {
+            margin: 5px 0;
+        }
+
+        .log span {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Mock Frontend</h1>
+
+    <div id="logs"></div>
+
+    <button id="connectBtn">Connect</button>
+    <button id="disconnectBtn">Disconnect</button>
+
+    <div>
+        <h3>Send Emoji Reaction</h3>
+        <input type="text" id="emojiInput" placeholder="Enter emoji">
+        <input type="text" id="sportInput" placeholder="Enter sport">
+        <button id="sendEmojiBtn">Send Reaction</button>
+    </div>
+
+    <script>
+        const MOCK_JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsiaWQiOiI2NzY0NWRiMWZlODI1NTU4NTZlZjljNzAifSwidXNlciI6eyJfaWQiOiI2NzY0NWRiMWZlODI1NTU4NTZlZjljNzAiLCJkZWxldGVkIjpmYWxzZSwiZmlyc3ROYW1lIjoiU291YmhpayIsIm1pZGRsZU5hbWUiOiJLdW1hciIsImxhc3ROYW1lIjoiR29uIiwicGhvbmUiOiI2MzcwNDYyMzU0IiwiZW1haWwiOiJzb3ViaGlrZ29uMjAwNEBnbWFpbC5jb20iLCJnZW5kZXIiOiJtYWxlIiwiYmF0Y2giOiIyMDI2IiwiYnJhbmNoIjoiSVQiLCJwYXNzd29yZCI6IiQyYiQxMCRmdFdUM1dpQk5GbWlFbWpFMExzYi5PY2luU2VkS1hGd0I0MS5yT1dRN2M0T2VFSzRpN2lDcSJ9LCJpYXQiOjE3MzQ3Mjg5MjgsImV4cCI6MTc2NjI2NDkyOH0.-PCQ4NQtnI8h8El6WLeCp99Nwy8OgtTS7jdQUANP4q0';
+
+        const logs = document.getElementById('logs');
+        const connectBtn = document.getElementById('connectBtn');
+        const disconnectBtn = document.getElementById('disconnectBtn');
+        const heartbeatBtn = document.getElementById('heartbeatBtn');
+        const sendEmojiBtn = document.getElementById('sendEmojiBtn');
+
+        const emojiInput = document.getElementById('emojiInput');
+        const sportInput = document.getElementById('sportInput');
+
+        let socket;
+        const reactionEndpoint = 'http://localhost:3000/reactions'
+        function log(message) {
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log';
+            logEntry.innerHTML = `<span>[Log]</span> ${message}`;
+            logs.appendChild(logEntry);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        function connect() {
+            log('Connecting to Gateway...');
+
+            // Connect to presence namespace
+            socket = io('http://localhost:3000/v1/events', {
+                auth: { token: MOCK_JWT },
+            });
+            let hbn = 0;
+            let intervalID = null;
+            socket.on('connect', () => {
+                log('Connected to Broadcast Gateway.')
+                intervalID = setInterval(() => {
+                    socket.emit('heartbeat');
+                    log('Hearbeat ' + hbn++);
+                }, 100000);
+            });
+
+            socket.on('disconnect', () => {
+                log('Disconnected from Broadcast Presence Gateway.')
+                clearInterval(intervalID)
+            }
+            );
+
+            socket.on('pub:status:change', (data) => log(`Status Change: ${JSON.stringify(data)}`));
+
+            socket.on('pub:reaction:broadcast', (data) => log(`Reaction Received: ${JSON.stringify(data)}`));
+        }
+
+        function disconnect() {
+            if (socket) {
+                socket.disconnect();
+                log('Disconnected from Presence Gateway.');
+            }
+
+            if (socket) {
+                socket.disconnect();
+                log('Disconnected from Reaction Gateway.');
+            }
+        }
+
+        function sendHeartbeat() {
+            if (socket) {
+                socket.emit('heartbeat');
+                log('Heartbeat sent.');
+            } else {
+                log('Presence socket is not connected.');
+            }
+        }
+
+        async function sendReaction() {
+            const emoji = emojiInput.value;
+            const sport = sportInput.value;
+
+            if (!emoji || !sport) {
+                log('Emoji and Sport are required to send a reaction.');
+                return;
+            }
+
+            try {
+                const response = await fetch(reactionEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${MOCK_JWT}`,
+                    },
+                    body: JSON.stringify({ emoji, sport })
+                });
+
+                if (response.ok) {
+                    log(`Reaction sent successfully: Emoji=${emoji}, Sport=${sport}`);
+                } else {
+                    const error = await response.text();
+                    log(`Failed to send reaction: ${error}`);
+                }
+            } catch (err) {
+                log(`Error sending reaction: ${err.message}`);
+            }
+        }
+
+        connectBtn.addEventListener('click', connect);
+        disconnectBtn.addEventListener('click', disconnect);
+        sendEmojiBtn.addEventListener('click', sendReaction);
+    </script>
+</body>
+
+</html>
