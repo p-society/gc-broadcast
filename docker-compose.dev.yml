@@ -9,7 +9,7 @@ services:
       - "3030:3030"
     environment:
       NODE_ENV: development
-      DEBUG: true
+      DEBUG: 'true'
     volumes:
       - .:/usr/src/app
     command: yarn start --port 3030
@@ -30,7 +30,7 @@ services:
       KAFKA_LISTENER_NAME: INSIDE
       KAFKA_LISTENER_PORT: 9092
       KAFKA_LISTENER_HOSTNAME: kafka
-      KAFKA_LISTENER_INTERNAL: true
+      KAFKA_LISTENER_INTERNAL: 'true'
       KAFKA_LISTENER_DEFAULT: INSIDE
       KAFKA_LISTENER_SECURITY_PROTOCOL: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1

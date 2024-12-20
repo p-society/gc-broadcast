@@ -1,11 +1,11 @@
-name: Build and Publish Docker Image
+name: Build, Publish Docker Image, and Create Release
 
 on:
   push:
     branches:
       - dev
     paths:
-      - '**/docker-compose.yml'
+      - '**/docker-compose.dev.yml'
 
 jobs:
   build:
@@ -26,5 +26,18 @@ jobs:
 
       - name: Build and push Docker image using docker-compose
         run: |
-          docker-compose -f docker-compose.yml build
-          docker-compose -f docker-compose.yml push
+          docker-compose -f docker-compose.dev.yml build
+          docker-compose -f docker-compose.dev.yml push
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: gh action/create-release@v1
+        with:
+          tag_name: "v${{ github.run_number }}"
+          release_name: "Release v${{ github.run_number }}"
+          body: |
+            This release contains the latest Docker images built and pushed for `dev`.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
