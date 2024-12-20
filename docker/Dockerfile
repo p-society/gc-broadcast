@@ -12,14 +12,14 @@ ENV DEBUG $DEBUG
 #
 RUN chmod 2777 "/usr/src/app"
 
-COPY . /usr/src/app
+COPY ../ /usr/src/app
 
 RUN rm -rf yarn.lock
 
 # Install app dependencies
 #RUN yarn install --pure-lockfile
 RUN yarn install
-RUN yarn env production
+RUN yarn env development
 RUN rm -rf env
 #
 RUN yarn build
