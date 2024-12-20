@@ -4,10 +4,15 @@ import { Job } from 'bullmq';
 import { PresenceGateway } from 'src/services/gateways/presence/presence.gateway';
 import { ReactionStreamJob } from '../jobs/reactions.job';
 import { ReactionSocketEvents } from 'src/services/gateways/constants/reaction.events';
+import { ReactionGateway } from 'src/services/gateways/reactions/reactions.gateway';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Processor(REACTION_STREAM_QUEUE)
 export class ReactionStreamProcessor extends WorkerHost {
-  constructor(private readonly presenceGateway: PresenceGateway) {
+  constructor(
+    private readonly reactionGateway: ReactionGateway,
+    private readonly internalEventEmitter: EventEmitter2,
+  ) {
     super();
   }
 
@@ -18,18 +23,16 @@ export class ReactionStreamProcessor extends WorkerHost {
       data: ReactionStreamJob;
     };
 
-    const done = this.presenceGateway.server.emit(
-      ReactionSocketEvents.REACTION_BROADCAST,
-      {
-        payload: {
-          emoji,
-          sport,
-        },
+    this.internalEventEmitter.emit(ReactionSocketEvents.IN_REACTION_BROADCAST, {
+      payload: {
+        emoji,
+        sport,
       },
-    );
+    });
 
     return {
-      done,
+      streamed: true,
+      ts: new Date(),
     };
   }
 }
