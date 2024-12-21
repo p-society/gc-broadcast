@@ -1,14 +1,21 @@
 import { Injectable } from '@nestjs/common';
+import { ReactionDto } from './dto/reactions.dto';
+import { processReaction } from './reaction.helper';
+import { ReactionStreamProducer } from 'src/services/bullmq/producers/reaction-stream.producer';
 
 @Injectable()
 export class ReactionService {
-  /**
-   * Save the reaction or perform other business logic.
-   * @param reaction - Processed reaction data (already validated and transformed).
-   */
-  saveReaction(reaction: { emoji: string; sport: string }): string {
-    // Simulate saving to a database or performing other business logic
-    console.log('Saving reaction to database:', reaction);
-    return 'Reaction saved successfully!';
+  constructor(
+    private readonly reactionStreamProducer: ReactionStreamProducer,
+  ) {}
+  async enqueueReactions(createReactionsDto: ReactionDto) {
+    const reaction = processReaction(createReactionsDto);
+    await this.reactionStreamProducer.pushForAsyncStream(
+      `process-reaction`,
+      reaction,
+      {
+        removeOnComplete: true,
+      },
+    );
   }
 }
