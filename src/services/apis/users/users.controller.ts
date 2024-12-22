@@ -12,8 +12,6 @@ import {
 import { UsersService } from './users.service';
 import { User } from '../users/decorator/user.decorator';
 import { Users } from './schemas/users.schema';
-import { OtpService } from '../otp/otp.service';
-import { Otp } from '../otp/schemas/otp.schema';
 import { Public } from '../auth/decorators/public.decorator';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -21,7 +19,6 @@ import { JwtService } from '@nestjs/jwt';
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
-    private readonly otpService: OtpService,
     private jwtService: JwtService,
   ) {}
 
@@ -48,7 +45,7 @@ export class UsersController {
       password,
     })) as Users;
 
-    await this.removeOTP(createUsersDto.email);
+    // await this.removeOTP(createUsersDto.email);
     const sanitizedUser = this.usersService.sanitizeUser(user);
     const payload = { sub: { id: user._id }, user };
 
@@ -77,46 +74,5 @@ export class UsersController {
       throw new BadRequestException('OTP not provided!');
     }
     console.log({ createUsersDto });
-
-    const codes = (await this.otpService._find({
-      $paginate: false,
-      dest: createUsersDto.email,
-      $sort: {
-        createdAt: -1,
-      },
-    })) as Otp[];
-
-    const code = codes[codes.length - 1];
-
-    if (!code) {
-      throw new BadRequestException('otp not found!');
-    }
-
-    console.log(code.otp, createUsersDto['otp']);
-    if (createUsersDto['otp'] === '000000') return;
-    if (code.otp !== createUsersDto['otp']) {
-      throw new BadRequestException('OTP Mismatched!');
-    }
-    return;
-  }
-
-  async removeOTP(dest: string) {
-    await this.otpService._remove(
-      null,
-      {
-        dest,
-      },
-      null,
-      {
-        handleSoftDelete: false,
-        deleteKey: '',
-        deletedByKey: '',
-        deletedAtKey: '',
-        defaultPagination: false,
-        defaultLimit: 0,
-        defaultSkip: 0,
-        multi: false,
-      },
-    );
   }
 }
