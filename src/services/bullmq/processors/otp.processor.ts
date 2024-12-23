@@ -26,11 +26,7 @@ export class OtpQueueProcessor extends WorkerHost {
       } = job as { data: OtpJob };
       await this.storeOtpWithTTL(email, parseInt(this.otp));
       console.log(`OTP for ${email} is ${this.otp} and stored in Redis`);
-      await this.mailerService.sendMail(
-        email,
-        this.otp,
-        'templates/partials/otp.hbs',
-      );
+      await this.mailerService.sendMail(email, this.otp, 'partials/otp.hbs');
       console.log(`OTP email sent to ${email}`);
     } catch (error) {
       console.error('Error in processing OTP job', error);
