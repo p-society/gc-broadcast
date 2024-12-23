@@ -11,34 +11,21 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Get latest version tag
-        id: get_version
+      - name: Generate Release Name
+        id: release_name
         run: |
-          # Fetch tags from the repository
-          git fetch --tags
-          # Get the latest tag, if exists, otherwise default to v0.0.0
-          latest_tag=$(git describe --tags --abbrev=0 || echo "v0.0.0")
-          echo "Latest tag: $latest_tag"
+          # Get the current date in the desired format
+          release_date=$(date +"%Y-%m-%d")
+          release_name="⚡ Release $release_date"
+          echo "Generated release name: $release_name"
           
-          # Split the version into its components
-          major=$(echo $latest_tag | cut -d. -f1 | tr -d 'v')
-          minor=$(echo $latest_tag | cut -d. -f2)
-          patch=$(echo $latest_tag | cut -d. -f3)
-
-          # Increment the patch version
-          patch=$((patch + 1))
-
-          # Create the new version tag
-          new_version="v$major.$minor.$patch"
-          echo "New version: $new_version"
-          
-          # Set the new version as an output
-          echo "::set-output name=version::$new_version"
+          # Set the release name as an output
+          echo "::set-output name=name::$release_name"
 
       - name: Create a Release
         uses: elgohr/Github-Release-Action@v5
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          title: ${{ steps.get_version.outputs.version }} 🎉
-          tag_name: ${{ steps.get_version.outputs.version }}
+          title: ${{ steps.release_name.outputs.name }}
+          tag_name: ${{ steps.release_name.outputs.name }}
