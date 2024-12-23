@@ -11,7 +11,7 @@ export class ReactionStreamProcessor extends WorkerHost {
     super();
   }
 
-  async process(job: Job, token?: string): Promise<any> {
+  async process(job: Job): Promise<any> {
     const {
       data: { emoji, sport },
     } = job as {

@@ -1,1 +1,2 @@
 export const REACTION_STREAM_QUEUE = 'REACTION_STREAM_QUEUE';
+export const OTP_QUEUE = 'OTP_QUEUE';

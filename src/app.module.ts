@@ -14,6 +14,8 @@ import { ReactionsModule } from './services/apis/reactions/reactions.module';
 import { ProfilesModule } from './services/apis/profiles/profiles.module';
 import { QueueModule } from './services/bullmq/queue.module';
 import { BullModule } from '@nestjs/bullmq';
+import { GenerateOtpModule } from './services/apis/otp/generateOtp.module';
+import { MailerModule } from './services/apis/mailer/mailer.module';
 
 @Module({
   imports: [
@@ -43,6 +45,8 @@ import { BullModule } from '@nestjs/bullmq';
     AdapterModule,
     ProfilesModule,
     ReactionsModule,
+    GenerateOtpModule,
+    MailerModule,
   ],
   controllers: [AppController],
   providers: [
