@@ -7,11 +7,15 @@ import { hashString } from 'src/common/hashing';
 import { OtpJob } from '../jobs/otp.jobs';
 import generateRandomNumber from 'src/common/generate-random-number';
 import { Injectable } from '@nestjs/common';
+import { MailerService } from 'src/services/apis/mailer/mailer.service';
 
 @Injectable()
 @Processor(OTP_QUEUE)
 export class OtpQueueProcessor extends WorkerHost {
-  constructor(private readonly redisService: RedisService) {
+  constructor(
+    private readonly redisService: RedisService,
+    private readonly mailerService: MailerService,
+  ) {
     super();
   }
   otp: string = generateRandomNumber();
@@ -22,6 +26,12 @@ export class OtpQueueProcessor extends WorkerHost {
       } = job as { data: OtpJob };
       await this.storeOtpWithTTL(email, parseInt(this.otp));
       console.log(`OTP for ${email} is ${this.otp} and stored in Redis`);
+      await this.mailerService.sendMail(
+        email,
+        this.otp,
+        'templates/partials/otp.hbs',
+      );
+      console.log(`OTP email sent to ${email}`);
     } catch (error) {
       console.error('Error in processing OTP job', error);
     }

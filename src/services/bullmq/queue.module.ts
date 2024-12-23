@@ -6,6 +6,7 @@ import { ReactionStreamProcessor } from './processors/reaction-stream.processor'
 import { OtpProducer } from './producers/otp.producer';
 import { PresenceModule } from '../gateways/presence/presence.module';
 import { OtpQueueProcessor } from './processors/otp.processor';
+import { MailerModule } from '../apis/mailer/mailer.module';
 
 @Global()
 @Module({
@@ -15,6 +16,7 @@ import { OtpQueueProcessor } from './processors/otp.processor';
       { name: OTP_QUEUE },
     ),
     PresenceModule,
+    MailerModule,
   ],
   providers: [
     ReactionStreamProcessor,

@@ -4,7 +4,7 @@ import { MailerService } from './mailer.service';
 import { MailerModule as NestMailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import * as path from 'path';
-import { MailerController } from './mailer.controller';
+// import { MailerController } from './mailer.controller';
 
 @Global()
 @Module({
@@ -41,7 +41,7 @@ import { MailerController } from './mailer.controller';
       }),
     }),
   ],
-  controllers: [MailerController],
+  controllers: [],
   providers: [MailerService],
   exports: [MailerService],
 })
