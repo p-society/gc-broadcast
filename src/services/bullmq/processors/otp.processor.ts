@@ -51,7 +51,7 @@ export class OtpQueueProcessor extends WorkerHost {
     const key = generateKey(email);
     const hashedOtp = await hashString(otp);
     const storedOtp = await this.redisService.get(key);
-    return hashedOtp === storedOtp;
+    return await compareHashedString(hashedOtp, storedOtp);
   }
 }
 
