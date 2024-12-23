@@ -3,7 +3,7 @@ import { OTP_QUEUE } from '../constants/queues';
 import { RedisService } from 'src/services/redis/redis.service';
 import { Job } from 'bullmq';
 import { OTP_TTL } from 'src/constants/otp.constants';
-import { hashString } from 'src/common/hashing';
+import { compareHashedString, hashString } from 'src/common/hashing';
 import { OtpJob } from '../jobs/otp.jobs';
 import generateRandomNumber from 'src/common/generate-random-number';
 import { Injectable } from '@nestjs/common';
@@ -19,7 +19,7 @@ export class OtpQueueProcessor extends WorkerHost {
     super();
   }
   otp: string = generateRandomNumber();
-  async process(job: Job): Promise<void> {
+  async process(job: Job) {
     try {
       const {
         data: { email },
@@ -32,8 +32,15 @@ export class OtpQueueProcessor extends WorkerHost {
         'templates/partials/otp.hbs',
       );
       console.log(`OTP email sent to ${email}`);
+      return {
+        success: true,
+      };
     } catch (error) {
       console.error('Error in processing OTP job', error);
+      return {
+        success: false,
+        message: error,
+      };
     }
   }
 
@@ -44,14 +51,14 @@ export class OtpQueueProcessor extends WorkerHost {
     await this.redisService.set(key, value, OTP_TTL);
   }
 
-  async comapreOtp(email: string, otp: string): Promise<boolean> {
-    const key = await generateKey(email);
+  async compareOtp(email: string, otp: string): Promise<boolean> {
+    const key = generateKey(email);
     const hashedOtp = await hashString(otp);
     const storedOtp = await this.redisService.get(key);
     return hashedOtp === storedOtp;
   }
 }
 
-async function generateKey(email: string): Promise<string> {
+function generateKey(email: string): string {
   return `verification::email:${email}`;
 }

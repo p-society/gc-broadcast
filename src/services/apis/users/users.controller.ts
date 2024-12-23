@@ -15,11 +15,14 @@ import { Users } from './schemas/users.schema';
 import { Public } from '../auth/decorators/public.decorator';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { CreateUsersDTO } from './dto/users.dto';
+import { GenerateOtpService } from '../otp/generateOtp.service';
 @Controller('users')
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
+    private readonly generateOtpService: GenerateOtpService,
   ) {}
 
   @Get()
@@ -35,7 +38,20 @@ export class UsersController {
   @Public()
   @Post()
   async create(@Body() createUsersDto: Users) {
-    await this.verifyOTP(createUsersDto);
+    /**
+     * @todo use zod for validations...
+     */
+    if (!createUsersDto.email || !createUsersDto['otp']) {
+      throw new BadRequestException('Email or OTP not provided!');
+    }
+
+    await this.generateOtpService.compareOtp(
+      {
+        email: createUsersDto.email.trim(),
+        otp: String(createUsersDto['otp']).trim(),
+      },
+      true, // removeEntryAfterCheck
+    );
 
     const saltOrRounds = 10;
     const password = await bcrypt.hash(createUsersDto.password, saltOrRounds);
@@ -45,7 +61,6 @@ export class UsersController {
       password,
     })) as Users;
 
-    // await this.removeOTP(createUsersDto.email);
     const sanitizedUser = this.usersService.sanitizeUser(user);
     const payload = { sub: { id: user._id }, user };
 
@@ -67,12 +82,5 @@ export class UsersController {
   @Delete('/:id?')
   async delete(@Param('id') id, @Query() query, @User() user) {
     return await this.usersService._remove(id, query, user);
-  }
-
-  async verifyOTP(createUsersDto: Users) {
-    if (!Object.keys(createUsersDto).includes('otp')) {
-      throw new BadRequestException('OTP not provided!');
-    }
-    console.log({ createUsersDto });
   }
 }

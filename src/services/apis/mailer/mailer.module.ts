@@ -24,7 +24,7 @@ import * as path from 'path';
           from: configService.get<string>('MAIL_FROM'),
         },
         template: {
-          dir: path.join(__dirname, 'templates'),
+          dir: path.join(__dirname, ''),
           adapter: new HandlebarsAdapter(),
           options: {
             strict: true,
@@ -32,7 +32,7 @@ import * as path from 'path';
         },
         options: {
           partials: {
-            dir: path.join(__dirname, 'templates/partials'),
+            dir: path.join(__dirname, '/partials'),
             options: {
               strict: true,
             },

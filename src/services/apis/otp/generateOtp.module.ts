@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { GenerateOtpController } from './generateOtp.controller';
-import { QueueModule } from 'src/services/bullmq/queue.module';
-import { GenrateOtpService } from './genrateOtp.service';
+import { GenerateOtpService } from './generateOtp.service';
 
 @Module({
-  imports: [QueueModule],
+  imports: [],
   controllers: [GenerateOtpController],
-  providers: [GenrateOtpService],
-  exports: [GenrateOtpService], // not exporting services as no need in testing
+  providers: [GenerateOtpService],
+  exports: [GenerateOtpService], // not exporting services as no need in testing (??)
 })
 export class GenerateOtpModule {}
