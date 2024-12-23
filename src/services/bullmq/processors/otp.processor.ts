@@ -6,7 +6,9 @@ import { OTP_TTL } from 'src/constants/otp.constants';
 import { hashString } from 'src/common/hashing';
 import { OtpJob } from '../jobs/otp.jobs';
 import generateRandomNumber from 'src/common/generate-random-number';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 @Processor(OTP_QUEUE)
 export class OtpQueueProcessor extends WorkerHost {
   constructor(private readonly redisService: RedisService) {
@@ -26,14 +28,20 @@ export class OtpQueueProcessor extends WorkerHost {
   }
 
   async storeOtpWithTTL(email: string, otp: number): Promise<void> {
-    const key = await generateKey(email, otp);
-    const value = new Date().toISOString();
+    const key = await generateKey(email);
+    const hashedOtp = await hashString(otp.toString());
+    const value = hashedOtp;
     await this.redisService.set(key, value, OTP_TTL);
+  }
+
+  async comapreOtp(email: string, otp: string): Promise<boolean> {
+    const key = await generateKey(email);
+    const hashedOtp = await hashString(otp);
+    const storedOtp = await this.redisService.get(key);
+    return hashedOtp === storedOtp;
   }
 }
 
-async function generateKey(email: string, otp: number): Promise<string> {
-  const hashedEmail = await hashString(email);
-  const hashedOtp = await hashString(otp.toString());
-  return `verification::email:${hashedEmail}:otp:${hashedOtp}`;
+async function generateKey(email: string): Promise<string> {
+  return `verification::email:${email}`;
 }

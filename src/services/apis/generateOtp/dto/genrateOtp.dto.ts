@@ -7,3 +7,13 @@ export class OtpDto {
 
   email: string;
 }
+
+export class VerifyOtpDto {
+  /**
+   * The email of the user to send OTP.
+   * @example  "
+   * */
+
+  email: string;
+  otp: string;
+}
