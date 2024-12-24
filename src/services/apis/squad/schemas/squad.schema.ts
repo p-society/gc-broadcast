@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { Users } from '../../users/schemas/users.schema';
 
 export type SquadDocument = HydratedDocument<Squad>;
 
@@ -8,38 +7,20 @@ export type SquadDocument = HydratedDocument<Squad>;
   timestamps: true,
 })
 export class Squad {
-  @Prop({ trim: true, required: true })
+  @Prop({ required: true })
+  id: string;
+
+  @Prop({ type: String, required: true })
   name: string;
 
-  @Prop({ trim: true })
-  description?: string;
+  @Prop({ type: String, required: true })
+  branch: string;
 
-  @Prop({
-    type: Types.ObjectId,
-    ref: Users.name,
-    required: true,
-  })
-  createdBy: Types.ObjectId;
+  @Prop({ type: String })
+  season: string;
 
-  @Prop({
-    type: Types.ObjectId,
-    ref: Users.name,
-  })
-  captainId: Types.ObjectId;
-
-  @Prop({ default: false })
-  deleted: boolean;
-
-  @Prop({
-    type: Types.ObjectId,
-    ref: Users.name,
-  })
-  deletedBy: Types.ObjectId;
-
-  @Prop({
-    type: Date,
-  })
-  deletedAt: Date;
+  @Prop({ type: String, required: true })
+  sport: string;
 }
 
 export const SquadSchema = SchemaFactory.createForClass(Squad);

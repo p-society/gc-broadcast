@@ -1,8 +1,32 @@
 import { z } from 'zod';
 import { Types } from 'mongoose';
 
+// Enums
+const StageEnum = z.enum(['league', 'qualifier', 'final']);
+const StatusEnum = z.enum([
+  'live',
+  'upcoming',
+  'concluded',
+  'paused',
+  'postponed',
+  'cancelled',
+]);
+const OutcomeEnum = z.enum(['team1', 'team2', 'draw', 'no_result']);
+const ReasonEnum = z.enum(['bad_weather', 'insufficient_time', 'other']);
+
 export const CreateMatchesValidation = z.object({
-  name: z.string().optional(),
+  scheduledFor: z.string(),
+  team1: z.string().refine((val) => Types.ObjectId.isValid(val), {
+    message: 'Invalid team1 ID',
+  }),
+  team2: z.string().refine((val) => Types.ObjectId.isValid(val), {
+    message: 'Invalid team2 ID',
+  }),
+  sport: z.string(),
+  stage: StageEnum,
+  status: StatusEnum,
+  outcome: OutcomeEnum.optional(),
+  reasonForIncompletion: ReasonEnum.optional(),
   createdBy: z
     .string()
     .refine((val) => Types.ObjectId.isValid(val), {
@@ -22,7 +46,24 @@ export const CreateMatchesValidation = z.object({
 });
 
 export const PatchMatchesValidation = z.object({
-  name: z.string().optional(),
+  scheduledFor: z.string().optional(),
+  team1: z
+    .string()
+    .refine((val) => Types.ObjectId.isValid(val), {
+      message: 'Invalid team1 ID',
+    })
+    .optional(),
+  team2: z
+    .string()
+    .refine((val) => Types.ObjectId.isValid(val), {
+      message: 'Invalid team2 ID',
+    })
+    .optional(),
+  sport: z.string().optional(),
+  stage: StageEnum.optional(),
+  status: StatusEnum.optional(),
+  outcome: OutcomeEnum.optional(),
+  reasonForIncompletion: ReasonEnum.optional(),
   updatedAt: z.date().optional(),
   createdAt: z.date().optional(),
   deleted: z.boolean().optional(),
@@ -37,7 +78,7 @@ export const PatchMatchesValidation = z.object({
 
 export const RemoveMatchesValidation = z.object({
   id: z.string().refine((val) => Types.ObjectId.isValid(val), {
-    message: 'Invalid user ID',
+    message: 'Invalid matches ID',
   }),
   deletedBy: z
     .string()
@@ -48,6 +89,6 @@ export const RemoveMatchesValidation = z.object({
   deletedAt: z.date().optional(),
 });
 
-export type CreateMatchesDTO = z.infer<typeof CreateMatchesValidation>;
-export type PatchMatchesDTO = z.infer<typeof PatchMatchesValidation>;
-export type RemoveMatchesDTO = z.infer<typeof RemoveMatchesValidation>;
+export type CreateMatchesDto = z.infer<typeof CreateMatchesValidation>;
+export type PatchMatchesDto = z.infer<typeof PatchMatchesValidation>;
+export type RemoveMatchesDto = z.infer<typeof RemoveMatchesValidation>;

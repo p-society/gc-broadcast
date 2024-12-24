@@ -1,53 +1,50 @@
+// team_player.dto.ts
 import { z } from 'zod';
 import { Types } from 'mongoose';
 
+// Enums
+const TeamPlayerStatusEnum = z.enum([
+  'playing',
+  'retired',
+  'banned',
+  'substituted',
+]);
+
 export const CreateTeamPlayerValidation = z.object({
-  name: z.string().optional(),
-  createdBy: z
-    .string()
-    .refine((val) => Types.ObjectId.isValid(val), {
-      message: 'Invalid creator ID',
-    })
-    .optional(),
+  team: z.string().refine((val) => Types.ObjectId.isValid(val), {
+    message: 'Invalid team ID',
+  }),
+  user: z.string().refine((val) => Types.ObjectId.isValid(val), {
+    message: 'Invalid user ID',
+  }),
+  status: TeamPlayerStatusEnum.default('playing'),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
-  deleted: z.boolean().optional().default(false),
-  deletedBy: z
-    .string()
-    .refine((val) => Types.ObjectId.isValid(val), {
-      message: 'Invalid deleter ID',
-    })
-    .optional(),
-  deletedAt: z.date().optional(),
 });
 
 export const PatchTeamPlayerValidation = z.object({
-  name: z.string().optional(),
-  updatedAt: z.date().optional(),
-  createdAt: z.date().optional(),
-  deleted: z.boolean().optional(),
-  deletedBy: z
+  team: z
     .string()
     .refine((val) => Types.ObjectId.isValid(val), {
-      message: 'Invalid deleter ID',
+      message: 'Invalid team ID',
     })
     .optional(),
-  deletedAt: z.date().optional(),
+  user: z
+    .string()
+    .refine((val) => Types.ObjectId.isValid(val), {
+      message: 'Invalid user ID',
+    })
+    .optional(),
+  status: TeamPlayerStatusEnum.optional(),
+  updatedAt: z.date().optional(),
 });
 
 export const RemoveTeamPlayerValidation = z.object({
   id: z.string().refine((val) => Types.ObjectId.isValid(val), {
-    message: 'Invalid user ID',
+    message: 'Invalid team_player ID',
   }),
-  deletedBy: z
-    .string()
-    .refine((val) => Types.ObjectId.isValid(val), {
-      message: 'Invalid deleter ID',
-    })
-    .optional(),
-  deletedAt: z.date().optional(),
 });
 
-export type CreateTeamPlayerDTO = z.infer<typeof CreateTeamPlayerValidation>;
-export type PatchTeamPlayerDTO = z.infer<typeof PatchTeamPlayerValidation>;
-export type RemoveTeamPlayerDTO = z.infer<typeof RemoveTeamPlayerValidation>;
+export type CreateTeamPlayerDto = z.infer<typeof CreateTeamPlayerValidation>;
+export type PatchTeamPlayerDto = z.infer<typeof PatchTeamPlayerValidation>;
+export type RemoveTeamPlayerDto = z.infer<typeof RemoveTeamPlayerValidation>;

@@ -1,53 +1,67 @@
 import { z } from 'zod';
 import { Types } from 'mongoose';
 
+// Rename from Teams to Team for consistency
 export const CreateTeamValidation = z.object({
-  name: z.string().optional(),
-  createdBy: z
-    .string()
-    .refine((val) => Types.ObjectId.isValid(val), {
-      message: 'Invalid creator ID',
-    })
-    .optional(),
+  match: z.string().refine((val) => Types.ObjectId.isValid(val), {
+    message: 'Invalid match ID',
+  }),
+  captain: z.string().refine((val) => Types.ObjectId.isValid(val), {
+    message: 'Invalid captain ID',
+  }),
+  viceCaptain: z.string().refine((val) => Types.ObjectId.isValid(val), {
+    message: 'Invalid vice-captain ID',
+  }),
+  squad: z.string().refine((val) => Types.ObjectId.isValid(val), {
+    message: 'Invalid squad ID',
+  }),
+  sport: z.string().refine((val) => Types.ObjectId.isValid(val), {
+    message: 'Invalid sport ID',
+  }),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
-  deleted: z.boolean().optional().default(false),
-  deletedBy: z
-    .string()
-    .refine((val) => Types.ObjectId.isValid(val), {
-      message: 'Invalid deleter ID',
-    })
-    .optional(),
-  deletedAt: z.date().optional(),
 });
 
 export const PatchTeamValidation = z.object({
-  name: z.string().optional(),
-  updatedAt: z.date().optional(),
-  createdAt: z.date().optional(),
-  deleted: z.boolean().optional(),
-  deletedBy: z
+  match: z
     .string()
     .refine((val) => Types.ObjectId.isValid(val), {
-      message: 'Invalid deleter ID',
+      message: 'Invalid match ID',
     })
     .optional(),
-  deletedAt: z.date().optional(),
+  captain: z
+    .string()
+    .refine((val) => Types.ObjectId.isValid(val), {
+      message: 'Invalid captain ID',
+    })
+    .optional(),
+  viceCaptain: z
+    .string()
+    .refine((val) => Types.ObjectId.isValid(val), {
+      message: 'Invalid vice-captain ID',
+    })
+    .optional(),
+  squad: z
+    .string()
+    .refine((val) => Types.ObjectId.isValid(val), {
+      message: 'Invalid squad ID',
+    })
+    .optional(),
+  sport: z
+    .string()
+    .refine((val) => Types.ObjectId.isValid(val), {
+      message: 'Invalid sport ID',
+    })
+    .optional(),
+  updatedAt: z.date().optional(),
 });
 
 export const RemoveTeamValidation = z.object({
   id: z.string().refine((val) => Types.ObjectId.isValid(val), {
-    message: 'Invalid user ID',
+    message: 'Invalid team ID',
   }),
-  deletedBy: z
-    .string()
-    .refine((val) => Types.ObjectId.isValid(val), {
-      message: 'Invalid deleter ID',
-    })
-    .optional(),
-  deletedAt: z.date().optional(),
 });
 
-export type CreateTeamDTO = z.infer<typeof CreateTeamValidation>;
-export type PatchTeamDTO = z.infer<typeof PatchTeamValidation>;
-export type RemoveTeamDTO = z.infer<typeof RemoveTeamValidation>;
+export type CreateTeamDto = z.infer<typeof CreateTeamValidation>;
+export type PatchTeamDto = z.infer<typeof PatchTeamValidation>;
+export type RemoveTeamDto = z.infer<typeof RemoveTeamValidation>;

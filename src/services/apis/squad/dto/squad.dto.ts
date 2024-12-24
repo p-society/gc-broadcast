@@ -2,52 +2,42 @@ import { z } from 'zod';
 import { Types } from 'mongoose';
 
 export const CreateSquadValidation = z.object({
-  name: z.string().optional(),
-  createdBy: z
-    .string()
-    .refine((val) => Types.ObjectId.isValid(val), {
-      message: 'Invalid creator ID',
-    })
-    .optional(),
+  branch: z.string().refine((val) => Types.ObjectId.isValid(val), {
+    message: 'Invalid branch ID',
+  }),
+  name: z.string(),
+  season: z.string(),
+  sport: z.string().refine((val) => Types.ObjectId.isValid(val), {
+    message: 'Invalid sport ID',
+  }),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
-  deleted: z.boolean().optional().default(false),
-  deletedBy: z
-    .string()
-    .refine((val) => Types.ObjectId.isValid(val), {
-      message: 'Invalid deleter ID',
-    })
-    .optional(),
-  deletedAt: z.date().optional(),
 });
 
 export const PatchSquadValidation = z.object({
-  name: z.string().optional(),
-  updatedAt: z.date().optional(),
-  createdAt: z.date().optional(),
-  deleted: z.boolean().optional(),
-  deletedBy: z
+  branch: z
     .string()
     .refine((val) => Types.ObjectId.isValid(val), {
-      message: 'Invalid deleter ID',
+      message: 'Invalid branch ID',
     })
     .optional(),
-  deletedAt: z.date().optional(),
+  name: z.string().optional(),
+  season: z.string().optional(),
+  sport: z
+    .string()
+    .refine((val) => Types.ObjectId.isValid(val), {
+      message: 'Invalid sport ID',
+    })
+    .optional(),
+  updatedAt: z.date().optional(),
 });
 
 export const RemoveSquadValidation = z.object({
   id: z.string().refine((val) => Types.ObjectId.isValid(val), {
-    message: 'Invalid user ID',
+    message: 'Invalid squad ID',
   }),
-  deletedBy: z
-    .string()
-    .refine((val) => Types.ObjectId.isValid(val), {
-      message: 'Invalid deleter ID',
-    })
-    .optional(),
-  deletedAt: z.date().optional(),
 });
 
-export type CreateSquadDTO = z.infer<typeof CreateSquadValidation>;
-export type PatchSquadDTO = z.infer<typeof PatchSquadValidation>;
-export type RemoveSquadDTO = z.infer<typeof RemoveSquadValidation>;
+export type CreateSquadDto = z.infer<typeof CreateSquadValidation>;
+export type PatchSquadDto = z.infer<typeof PatchSquadValidation>;
+export type RemoveSquadDto = z.infer<typeof RemoveSquadValidation>;

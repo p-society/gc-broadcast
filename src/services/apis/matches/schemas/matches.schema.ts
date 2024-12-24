@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { Users } from '../../users/schemas/users.schema';
 
 export type MatchesDocument = HydratedDocument<Matches>;
 
@@ -8,63 +7,51 @@ export type MatchesDocument = HydratedDocument<Matches>;
   timestamps: true,
 })
 export class Matches {
-  @Prop({ trim: true, required: true })
-  name: string;
+  @Prop({ type: String, required: true })
+  id: string;
 
-  @Prop({
-    type: Types.ObjectId,
-    ref: 'Squad',
-    required: true,
-  })
-  squadId: Types.ObjectId;
+  @Prop({ type: Date, required: true })
+  scheduledFor: Date;
 
-  @Prop({
-    type: Types.ObjectId,
-    ref: 'Team',
-    required: true,
-  })
-  teamId: Types.ObjectId;
+  @Prop({ type: Date })
+  concludedAt: Date;
 
-  @Prop({
-    type: Types.ObjectId,
-    ref: Users.name,
-    required: true,
-  })
-  captainId: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'Team', required: true })
+  team1: Types.ObjectId;
 
-  @Prop({
-    type: Types.ObjectId,
-    ref: Users.name,
-    required: true,
-  })
-  createdBy: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'Team', required: true })
+  team2: Types.ObjectId;
 
-  @Prop({
-    type: Date,
-    required: true,
-  })
-  matchDate: Date;
+  @Prop({ type: String, required: true })
+  sport: string;
 
   @Prop({
     type: String,
-    enum: ['SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'],
-    default: 'SCHEDULED',
+    enum: ['league', 'qualifier', 'final'],
+    required: true,
+  })
+  stage: string;
+
+  @Prop({
+    type: String,
+    enum: ['live', 'upcoming', 'concluded', 'paused', 'postponed', 'cancelled'],
+    default: 'upcoming',
   })
   status: string;
 
-  @Prop({ default: false })
-  deleted: boolean;
+  @Prop({
+    type: String,
+    enum: ['team1', 'team2', 'draw', 'no_result'],
+    default: 'no_result',
+  })
+  outcome: string;
 
   @Prop({
-    type: Types.ObjectId,
-    ref: Users.name,
+    type: String,
+    enum: ['bad_weather', 'insufficient_time', 'other'],
+    default: null,
   })
-  deletedBy: Types.ObjectId;
-
-  @Prop({
-    type: Date,
-  })
-  deletedAt: Date;
+  reasonForIncompletion: string;
 }
 
 export const MatchesSchema = SchemaFactory.createForClass(Matches);
