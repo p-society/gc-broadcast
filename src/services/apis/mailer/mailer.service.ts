@@ -9,17 +9,20 @@ export class MailerService {
 
   async sendMail(
     to: string,
-    subject: string,
-    content: string,
+    // subject: string,
+    // content: string,
+    otp: string,
     template?: string,
-    context?: Record<string, any>,
+    //context?: Record<string, any>,
   ) {
     await this.mailerService.sendMail({
       to,
-      subject,
-      text: content,
+      subject: 'OTP for your account',
       template: template ? `./${template}` : undefined,
-      context: context || {},
+      context: {
+        otp,
+        supportEmail: 'techsociety@iiit-bh.ac.in',
+      },
     });
   }
 }

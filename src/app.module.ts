@@ -19,6 +19,8 @@ import { SquadModule } from './services/apis/squad/squad.module';
 import { SquadPlayerModule } from './services/apis/squadPlayer/squadPlayer.module';
 import { TeamModule } from './services/apis/team/team.module';
 import { TeamPlayerModule } from './services/apis/teamPlayer/teamPlayer.module';
+import { GenerateOtpModule } from './services/apis/otp/generateOtp.module';
+import { MailerModule } from './services/apis/mailer/mailer.module';
 
 @Module({
   imports: [
@@ -53,6 +55,8 @@ import { TeamPlayerModule } from './services/apis/teamPlayer/teamPlayer.module';
     TeamPlayerModule,
     ProfilesModule,
     ReactionsModule,
+    GenerateOtpModule,
+    MailerModule,
   ],
   controllers: [AppController],
   providers: [
