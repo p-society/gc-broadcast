@@ -1,9 +1,9 @@
 import { date, z } from 'zod';
 import { Types } from 'mongoose';
-import SportsEnum from 'src/constants/sports-enum';
+import Sports from 'src/constants/sports-enum';
 
 export const CreateProfilesValidation = z.object({
-  sport: z.nativeEnum(SportsEnum),
+  sport: z.nativeEnum(Sports),
   user: z.string().refine((val) => Types.ObjectId.isValid(val), {
     message: 'Invalid user ID',
   }),
@@ -32,7 +32,7 @@ export const CreateProfilesValidation = z.object({
 });
 
 export const PatchProfilesValidation = z.object({
-  sport: z.nativeEnum(SportsEnum).optional(),
+  sport: z.nativeEnum(Sports).optional(),
   user: z
     .string()
     .refine((val) => Types.ObjectId.isValid(val), {

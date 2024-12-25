@@ -14,6 +14,11 @@ import { ReactionsModule } from './services/apis/reactions/reactions.module';
 import { ProfilesModule } from './services/apis/profiles/profiles.module';
 import { QueueModule } from './services/bullmq/queue.module';
 import { BullModule } from '@nestjs/bullmq';
+import { MatchesModule } from './services/apis/matches/matches.module';
+import { SquadModule } from './services/apis/squad/squad.module';
+import { SquadPlayerModule } from './services/apis/squadPlayer/squadPlayer.module';
+import { TeamModule } from './services/apis/team/team.module';
+import { TeamPlayerModule } from './services/apis/teamPlayer/teamPlayer.module';
 import { GenerateOtpModule } from './services/apis/otp/generateOtp.module';
 import { MailerModule } from './services/apis/mailer/mailer.module';
 
@@ -43,6 +48,11 @@ import { MailerModule } from './services/apis/mailer/mailer.module';
     AuthModule,
     UsersModule,
     AdapterModule,
+    MatchesModule,
+    SquadModule,
+    SquadPlayerModule,
+    TeamModule,
+    TeamPlayerModule,
     ProfilesModule,
     ReactionsModule,
     GenerateOtpModule,
