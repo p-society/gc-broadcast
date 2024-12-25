@@ -1,12 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { TeamPlayerStatus } from '../constants/TeamPlayerEnum';
 
-export type TeamPlayerDocument = HydratedDocument<TeamPlayer>;
+export type TeamPlayersDocument = HydratedDocument<TeamPlayers>;
 
 @Schema({
   timestamps: true,
 })
-export class TeamPlayer {
+export class TeamPlayers {
   @Prop({ type: Types.ObjectId, ref: 'Team', required: true })
   team: Types.ObjectId;
 
@@ -15,10 +16,10 @@ export class TeamPlayer {
 
   @Prop({
     type: String,
-    enum: ['playing', 'retired', 'banned', 'substituted'],
-    default: 'playing',
+    enum: Object.values(TeamPlayerStatus),
+    default: TeamPlayerStatus.Playing,
   })
-  status: string;
+  status: TeamPlayerStatus;
 }
 
-export const TeamPlayerSchema = SchemaFactory.createForClass(TeamPlayer);
+export const TeamPlayersSchema = SchemaFactory.createForClass(TeamPlayers);

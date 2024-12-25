@@ -1,22 +1,26 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-export type SquadPlayerDocument = HydratedDocument<SquadPlayer>;
+import { SquadPlayerStatus } from '../constants/SquadPlayerEnum';
+import { Squads } from '../../squad/schemas/squad.schema';
+import { Users } from '../../users/schemas/users.schema';
+
+export type SquadPlayersDocument = HydratedDocument<SquadPlayers>;
 
 @Schema({
   timestamps: true,
 })
-export class SquadPlayer {
-  @Prop({ type: Types.ObjectId, ref: 'Squad', required: true })
+export class SquadPlayers {
+  @Prop({ type: Types.ObjectId, ref: Squads.name, required: true })
   squad: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  @Prop({ type: Types.ObjectId, ref: Users.name, required: true })
   user: Types.ObjectId;
 
   @Prop({
     type: String,
-    enum: ['approved', 'pending', 'rejected'],
-    default: 'pending',
+    enum: Object.values(SquadPlayerStatus),
+    default: SquadPlayerStatus.Pending,
   })
-  status: string;
+  status: SquadPlayerStatus;
 }
-export const SquadPlayerSchema = SchemaFactory.createForClass(SquadPlayer);
+export const SquadPlayersSchema = SchemaFactory.createForClass(SquadPlayers);

@@ -1,27 +1,32 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { Squads } from '../../squad/schemas/squad.schema';
+import { Matches } from '../../matches/schemas/matches.schema';
+import { Users } from '../../users/schemas/users.schema';
 
+export type TeamsDocument = HydratedDocument<Teams>;
 @Schema({
   timestamps: true,
 })
-export class Team {
-  @Prop({ required: true })
-  id: string;
-
-  @Prop({ type: Types.ObjectId, ref: 'Squad', required: true })
+export class Teams {
+  @Prop({ type: Types.ObjectId, ref: Squads.name, required: true })
   squad: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Match', required: true })
+  @Prop({ type: Types.ObjectId, ref: Matches.name, required: true })
   match: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  @Prop({ type: Types.ObjectId, ref: Users.name, required: true })
   captain: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'User' })
+  @Prop({ type: Types.ObjectId, ref: Users.name })
   viceCaptain: Types.ObjectId;
 
-  @Prop({ type: String, required: true })
-  sport: string;
+  @Prop({
+    type: String,
+    required: true,
+    // ref: Sports.name
+  })
+  sport: Types.ObjectId;
 }
 
-export const TeamSchema = SchemaFactory.createForClass(Team);
+export const TeamsSchema = SchemaFactory.createForClass(Teams);

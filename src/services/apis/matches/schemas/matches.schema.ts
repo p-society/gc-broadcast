@@ -1,5 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import {
+  MatchIncompletionReason,
+  MatchOutcome,
+  MatchStage,
+  MatchStatus,
+} from '../constants/MatchEnums';
+import { Teams } from '../../team/schemas/team.schema';
 
 export type MatchesDocument = HydratedDocument<Matches>;
 
@@ -7,51 +14,58 @@ export type MatchesDocument = HydratedDocument<Matches>;
   timestamps: true,
 })
 export class Matches {
-  @Prop({ type: String, required: true })
-  id: string;
-
   @Prop({ type: Date, required: true })
   scheduledFor: Date;
 
   @Prop({ type: Date })
   concludedAt: Date;
 
-  @Prop({ type: Types.ObjectId, ref: 'Team', required: true })
-  team1: Types.ObjectId;
-
-  @Prop({ type: Types.ObjectId, ref: 'Team', required: true })
-  team2: Types.ObjectId;
-
-  @Prop({ type: String, required: true })
-  sport: string;
-
   @Prop({
-    type: String,
-    enum: ['league', 'qualifier', 'final'],
+    type: Types.ObjectId,
+    ref: Teams.name,
     required: true,
   })
-  stage: string;
+  team1: Types.ObjectId;
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: Teams.name,
+    required: true,
+  })
+  team2: Types.ObjectId;
+
+  @Prop({
+    type: Types.ObjectId,
+    // ref: Sports.name // Include when sports entity is defined
+    required: true,
+  })
+  sport: Types.ObjectId;
 
   @Prop({
     type: String,
-    enum: ['live', 'upcoming', 'concluded', 'paused', 'postponed', 'cancelled'],
-    default: 'upcoming',
+    enum: Object.values(MatchStage),
+    required: true,
   })
-  status: string;
+  stage: MatchStage;
 
   @Prop({
     type: String,
-    enum: ['team1', 'team2', 'draw', 'no_result'],
-    default: 'no_result',
+    enum: Object.values(MatchStatus),
+    default: MatchStatus.Upcoming,
   })
-  outcome: string;
+  status: MatchStatus;
 
   @Prop({
     type: String,
-    enum: ['bad_weather', 'insufficient_time', 'other'],
-    default: null,
+    enum: Object.values(MatchOutcome),
   })
-  reasonForIncompletion: string;
+  outcome: MatchOutcome;
+
+  @Prop({
+    type: String,
+    enum: Object.values(MatchIncompletionReason),
+  })
+  reasonForIncompletion: MatchIncompletionReason;
 }
 
 export const MatchesSchema = SchemaFactory.createForClass(Matches);

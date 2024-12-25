@@ -1,9 +1,10 @@
 // squad_player.dto.ts
 import { z } from 'zod';
 import { Types } from 'mongoose';
+import { SquadPlayerStatus } from '../constants/SquadPlayerEnum';
 
 // Enums
-const SquadPlayerStatusEnum = z.enum(['approved', 'pending', 'rejected']);
+const SquadPlayerStatusEnum = z.nativeEnum(SquadPlayerStatus);
 
 export const CreateSquadPlayerValidation = z.object({
   squad: z.string().refine((val) => Types.ObjectId.isValid(val), {
@@ -12,7 +13,7 @@ export const CreateSquadPlayerValidation = z.object({
   user: z.string().refine((val) => Types.ObjectId.isValid(val), {
     message: 'Invalid user ID',
   }),
-  status: SquadPlayerStatusEnum.default('pending'),
+  status: SquadPlayerStatusEnum.default(SquadPlayerStatus.Pending),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 });

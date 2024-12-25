@@ -1,4 +1,4 @@
-enum SportsEnum {
+enum Sports {
   Football = 'Football',
   Cricket = 'Cricket',
   Badminton = 'Badminton',
@@ -7,12 +7,12 @@ enum SportsEnum {
 }
 
 export const SportsEnumList = [
-  SportsEnum.Football,
-  SportsEnum.Badminton,
-  SportsEnum.Basketball,
-  SportsEnum.Cricket,
-  SportsEnum.Football,
-  SportsEnum.Volleyball,
+  Sports.Football,
+  Sports.Badminton,
+  Sports.Basketball,
+  Sports.Cricket,
+  Sports.Football,
+  Sports.Volleyball,
 ];
 
-export default SportsEnum;
+export default Sports;

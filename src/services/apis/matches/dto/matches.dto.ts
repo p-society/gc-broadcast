@@ -1,18 +1,16 @@
 import { z } from 'zod';
 import { Types } from 'mongoose';
+import {
+  MatchIncompletionReason,
+  MatchOutcome,
+  MatchStage,
+  MatchStatus,
+} from '../constants/MatchEnums';
 
-// Enums
-const StageEnum = z.enum(['league', 'qualifier', 'final']);
-const StatusEnum = z.enum([
-  'live',
-  'upcoming',
-  'concluded',
-  'paused',
-  'postponed',
-  'cancelled',
-]);
-const OutcomeEnum = z.enum(['team1', 'team2', 'draw', 'no_result']);
-const ReasonEnum = z.enum(['bad_weather', 'insufficient_time', 'other']);
+const StageEnum = z.nativeEnum(MatchStage);
+const StatusEnum = z.nativeEnum(MatchStatus);
+const OutcomeEnum = z.nativeEnum(MatchOutcome);
+const IncompletionReasonEnum = z.nativeEnum(MatchIncompletionReason);
 
 export const CreateMatchesValidation = z.object({
   scheduledFor: z.string(),
@@ -22,11 +20,13 @@ export const CreateMatchesValidation = z.object({
   team2: z.string().refine((val) => Types.ObjectId.isValid(val), {
     message: 'Invalid team2 ID',
   }),
-  sport: z.string(),
+  sport: z.string().refine((val) => Types.ObjectId.isValid(val), {
+    message: 'Invalid sport ID',
+  }),
   stage: StageEnum,
   status: StatusEnum,
   outcome: OutcomeEnum.optional(),
-  reasonForIncompletion: ReasonEnum.optional(),
+  reasonForIncompletion: IncompletionReasonEnum.optional(),
   createdBy: z
     .string()
     .refine((val) => Types.ObjectId.isValid(val), {
@@ -59,11 +59,16 @@ export const PatchMatchesValidation = z.object({
       message: 'Invalid team2 ID',
     })
     .optional(),
-  sport: z.string().optional(),
+  sport: z
+    .string()
+    .refine((val) => Types.ObjectId.isValid(val), {
+      message: 'Invalid sport ID',
+    })
+    .optional(),
   stage: StageEnum.optional(),
   status: StatusEnum.optional(),
   outcome: OutcomeEnum.optional(),
-  reasonForIncompletion: ReasonEnum.optional(),
+  reasonForIncompletion: IncompletionReasonEnum.optional(),
   updatedAt: z.date().optional(),
   createdAt: z.date().optional(),
   deleted: z.boolean().optional(),

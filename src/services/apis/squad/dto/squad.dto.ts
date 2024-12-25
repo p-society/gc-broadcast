@@ -1,5 +1,8 @@
 import { z } from 'zod';
 import { Types } from 'mongoose';
+import Sports from 'src/constants/sports-enum';
+
+const SportsEnum = z.nativeEnum(Sports);
 
 export const CreateSquadValidation = z.object({
   branch: z.string().refine((val) => Types.ObjectId.isValid(val), {
