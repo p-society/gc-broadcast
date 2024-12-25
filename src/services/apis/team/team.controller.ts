@@ -11,7 +11,7 @@ import {
 import { TeamService } from './team.service';
 import { ModifyBody, setCreatedBy } from 'src/decorators/ModifyBody.decorator';
 import { User } from '../users/decorator/user.decorator';
-import { Team } from './schemas/team.schema';
+import { Teams } from './schemas/team.schema';
 
 @Controller('team')
 export class TeamController {
@@ -28,14 +28,14 @@ export class TeamController {
   }
 
   @Post()
-  async create(@ModifyBody(setCreatedBy()) createTeamDto: Team) {
+  async create(@ModifyBody(setCreatedBy()) createTeamDto: Teams) {
     return await this.teamService._create(createTeamDto);
   }
 
   @Patch('/:id?')
   async patch(
     @Query() query,
-    @Body() patchTeamDto: Partial<Team>,
+    @Body() patchTeamDto: Partial<Teams>,
     @Param('id') id,
   ) {
     return await this.teamService._patch(id, patchTeamDto, query);

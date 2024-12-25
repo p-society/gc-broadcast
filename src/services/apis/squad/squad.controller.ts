@@ -12,6 +12,7 @@ import { SquadService } from './squad.service';
 import { ModifyBody, setCreatedBy } from 'src/decorators/ModifyBody.decorator';
 import { User } from '../users/decorator/user.decorator';
 import { CreateSquadDto, PatchSquadDto } from './dto/squad.dto';
+import { Squads } from './schemas/squad.schema';
 
 @Controller('squad')
 export class SquadController {
@@ -28,14 +29,14 @@ export class SquadController {
   }
 
   @Post()
-  async create(@ModifyBody(setCreatedBy()) createSquadDto: CreateSquadDto) {
+  async create(@ModifyBody(setCreatedBy()) createSquadDto: Squads) {
     return await this.squadService._create(createSquadDto);
   }
 
   @Patch('/:id?')
   async patch(
     @Query() query,
-    @Body() patchSquadDto: PatchSquadDto,
+    @Body() patchSquadDto: Partial<Squads>,
     @Param('id') id,
   ) {
     return await this.squadService._patch(id, patchSquadDto, query);

@@ -3,9 +3,6 @@ import { Types } from 'mongoose';
 
 // Rename from Teams to Team for consistency
 export const CreateTeamValidation = z.object({
-  match: z.string().refine((val) => Types.ObjectId.isValid(val), {
-    message: 'Invalid match ID',
-  }),
   captain: z.string().refine((val) => Types.ObjectId.isValid(val), {
     message: 'Invalid captain ID',
   }),
@@ -23,12 +20,6 @@ export const CreateTeamValidation = z.object({
 });
 
 export const PatchTeamValidation = z.object({
-  match: z
-    .string()
-    .refine((val) => Types.ObjectId.isValid(val), {
-      message: 'Invalid match ID',
-    })
-    .optional(),
   captain: z
     .string()
     .refine((val) => Types.ObjectId.isValid(val), {
