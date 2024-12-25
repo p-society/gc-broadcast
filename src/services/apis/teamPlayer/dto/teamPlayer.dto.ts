@@ -1,14 +1,10 @@
 // team_player.dto.ts
 import { z } from 'zod';
 import { Types } from 'mongoose';
+import { TeamPlayerStatus } from '../constants/TeamPlayerEnum';
 
 // Enums
-const TeamPlayerStatusEnum = z.enum([
-  'playing',
-  'retired',
-  'banned',
-  'substituted',
-]);
+const TeamPlayerStatusEnum = z.nativeEnum(TeamPlayerStatus);
 
 export const CreateTeamPlayerValidation = z.object({
   team: z.string().refine((val) => Types.ObjectId.isValid(val), {
@@ -17,7 +13,7 @@ export const CreateTeamPlayerValidation = z.object({
   user: z.string().refine((val) => Types.ObjectId.isValid(val), {
     message: 'Invalid user ID',
   }),
-  status: TeamPlayerStatusEnum.default('playing'),
+  status: TeamPlayerStatusEnum.default(TeamPlayerStatus.Playing),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 });

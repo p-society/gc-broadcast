@@ -11,7 +11,7 @@ import {
 import { SquadPlayerService } from './squadPlayer.service';
 import { ModifyBody, setCreatedBy } from 'src/decorators/ModifyBody.decorator';
 import { User } from '../users/decorator/user.decorator';
-import { SquadPlayer } from './schemas/squadPlayer.schema';
+import { SquadPlayers } from './schemas/squadPlayer.schema';
 
 @Controller('squad-player')
 export class SquadPlayerController {
@@ -28,14 +28,14 @@ export class SquadPlayerController {
   }
 
   @Post()
-  async create(@ModifyBody(setCreatedBy()) createSquadPlayerDto: SquadPlayer) {
+  async create(@ModifyBody(setCreatedBy()) createSquadPlayerDto: SquadPlayers) {
     return await this.squadPlayerService._create(createSquadPlayerDto);
   }
 
   @Patch('/:id?')
   async patch(
     @Query() query,
-    @Body() patchSquadPlayerDto: Partial<SquadPlayer>,
+    @Body() patchSquadPlayerDto: Partial<SquadPlayers>,
     @Param('id') id,
   ) {
     return await this.squadPlayerService._patch(id, patchSquadPlayerDto, query);
