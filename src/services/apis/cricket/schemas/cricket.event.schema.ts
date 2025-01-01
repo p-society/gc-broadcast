@@ -33,7 +33,7 @@ export class CricketEvent extends SoftDeleteSchema {
     playerOut?: string | null;
     outReason?: any[];
     wickets?: number | null;
-    scoringType?: number | null;
+    scoringType?: string | null;
     illegal?: string | null;
     penalty?: number | null;
   };
