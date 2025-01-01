@@ -12,6 +12,7 @@ import { CricketService } from './cricket.service';
 import { ModifyBody, setCreatedBy } from 'src/decorators/ModifyBody.decorator';
 import { User } from '../users/decorator/user.decorator';
 import { CricketState } from './schemas/cricket.schema';
+import { CricketEvent } from './schemas/cricket.event.schema';
 
 @Controller('cricket')
 export class CricketController {
@@ -30,6 +31,14 @@ export class CricketController {
   @Post()
   async create(@ModifyBody(setCreatedBy()) createCricketDto: CricketState) {
     return await this.cricketService._create(createCricketDto);
+  }
+
+  @Post('/event')
+  async createEvent(
+    @ModifyBody(setCreatedBy()) createCricketEventDTO: CricketEvent,
+  ) {
+    const event = await this.cricketService.createEvent(createCricketEventDTO);
+    return event;
   }
 
   @Patch('/:id?')
