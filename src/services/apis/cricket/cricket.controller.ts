@@ -47,6 +47,31 @@ export class CricketController {
   }
 
   @Public()
+  @Get('/:matchid/event')
+  async getPreviousatestEvent(
+    @Query('id') prevEventID: string,
+    @Param('matchid') matchid: string,
+  ) {
+    const prevLatestEvent = await this.cricketService.getPreviousatestEvent(
+      matchid,
+      prevEventID,
+    );
+    return prevLatestEvent;
+  }
+
+  @Public()
+  @Get('/:matchid/event-series')
+  async getPreviousLatestEventSeries(
+    @Query('id') prevEventId: string,
+    @Param('matchid') matchid: string,
+  ) {
+    return await this.cricketService.getPreviousEventSeries(
+      matchid,
+      prevEventId,
+    );
+  }
+
+  @Public()
   @Get('/:matchid/state')
   async getLatestMatchState(@Param('matchid') matchid: string) {
     const matchState = await this.cricketService.getLatestMatchState(matchid);
