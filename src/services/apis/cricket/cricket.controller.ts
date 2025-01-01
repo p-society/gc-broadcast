@@ -14,6 +14,10 @@ import { User } from '../users/decorator/user.decorator';
 import { CricketState } from './schemas/cricket.schema';
 import { CricketEvent } from './schemas/cricket.event.schema';
 import { Public } from '../auth/decorators/public.decorator';
+import {
+  updateCricketEeventDTO,
+  updateCricketEeventDTOType,
+} from './dto/cricket.event.dto';
 
 @Controller('cricket')
 export class CricketController {
@@ -76,6 +80,21 @@ export class CricketController {
   async getLatestMatchState(@Param('matchid') matchid: string) {
     const matchState = await this.cricketService.getLatestMatchState(matchid);
     return matchState;
+  }
+
+  @Patch('/event/:eventID')
+  async updateEvent(
+    @Param('eventID') eventID: string,
+    @Body() updateEventDTO: updateCricketEeventDTOType,
+  ) {
+    updateEventDTO = updateCricketEeventDTO.parse(updateEventDTO);
+    return await this.cricketService.updateEvent(eventID, updateEventDTO);
+  }
+
+  @Delete('/event/:eventID')
+  async DeleteEvent(@Param('eventID') eventID: string) {
+    const result = await this.cricketService.deleteEvent(eventID);
+    return result;
   }
 
   @Patch('/:id?')

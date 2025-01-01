@@ -6,6 +6,7 @@ import { Model, Types } from 'mongoose';
 import { CricketEvent } from './schemas/cricket.event.schema';
 import { EventType } from 'src/types/EventType';
 import { create } from 'lodash';
+import { updateCricketEeventDTOType } from './dto/cricket.event.dto';
 
 @Injectable()
 export class CricketService extends GlobalService<
@@ -79,5 +80,22 @@ export class CricketService extends GlobalService<
       .find({ match: matchObjectId, createdAt: { $lt: TargetEvent.createdAt } })
       .sort({ createdAt: -1 });
     return events;
+  }
+
+  async updateEvent(
+    id: string,
+    updateCricketEventDTO: updateCricketEeventDTOType,
+  ) {
+    return await this.cricketEventModel.findByIdAndUpdate(
+      id,
+      updateCricketEventDTO,
+    );
+  }
+
+  async deleteEvent(id: string) {
+    const result = await this.cricketEventModel.findByIdAndDelete(id);
+    return {
+      message: 'Deleted Successfully',
+    };
   }
 }
