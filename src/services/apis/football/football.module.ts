@@ -1,17 +1,14 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { FootballController } from './football.controller';
-import { FootballService } from './football.service';
-import { Football, FootballSchema } from './schemas/football.schema';
+import { StateModule } from './states/state.module';
+import { FormatModule } from './format/format.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: Football.name, schema: FootballSchema },
-    ]),
+    StateModule, // Handles match states
+    FormatModule, // Handles match formats
+    EventsModule, // Handles match events
   ],
-  controllers: [FootballController],
-  providers: [FootballService],
-  exports: [FootballService],
+  exports: [StateModule, FormatModule, EventsModule],
 })
 export class FootballModule {}

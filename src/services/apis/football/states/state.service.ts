@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { MatchState } from '../schemas/states.schema';
-import { CreateMatchStateDtoType } from '../dto/state.dto';
+import { MatchState } from './state.schema';
+import { CreateMatchStateDtoType } from './state.dto';
 
 @Injectable()
 export class MatchStateService {

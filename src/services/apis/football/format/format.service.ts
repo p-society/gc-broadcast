@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { MatchFormat } from '../schemas/formats.schema';
-import { CreateMatchFormatDtoType } from '../dto/format.dto';
+import { MatchFormat } from './format.schema';
+import { CreateMatchFormatDtoType } from './format.dto';
 
 @Injectable()
 export class MatchFormatService {
