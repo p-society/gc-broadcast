@@ -35,11 +35,11 @@ export class Matches {
   team2: Types.ObjectId;
 
   @Prop({
-    type: Types.ObjectId,
+    type: String,
     // ref: Sports.name // Include when sports entity is defined
     required: true,
   })
-  sport: Types.ObjectId;
+  sport: string;
 
   @Prop({
     type: String,
