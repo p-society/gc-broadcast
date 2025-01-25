@@ -61,6 +61,6 @@ export class ScoreUpdateGateway
   ): void {
     const matchid = client.handshake.query.matchid;
     const room = `match:${matchid}`;
-    // this.server.to(room).emit('scoreUpdate', payload);
+    // this.server.to(room).emit(clea'scoreUpdate', payload);
   }
 }
