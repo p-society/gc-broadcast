@@ -21,6 +21,7 @@ import { TeamModule } from './services/apis/team/team.module';
 import { TeamPlayerModule } from './services/apis/teamPlayer/teamPlayer.module';
 import { GenerateOtpModule } from './services/apis/otp/generateOtp.module';
 import { MailerModule } from './services/apis/mailer/mailer.module';
+import { CricketModule } from './services/apis/cricket/cricket.module';
 
 @Module({
   imports: [
@@ -33,7 +34,7 @@ import { MailerModule } from './services/apis/mailer/mailer.module';
       connection: {
         host: process.env.REDIS_HOST,
         port: parseInt(process.env.REDIS_PORT),
-        password: process.env.REDIS_PASSWORD,
+        //password: process.env.REDIS_PASSWORD,
       },
     }),
     QueueModule,
@@ -57,6 +58,7 @@ import { MailerModule } from './services/apis/mailer/mailer.module';
     ReactionsModule,
     GenerateOtpModule,
     MailerModule,
+    CricketModule,
   ],
   controllers: [AppController],
   providers: [
