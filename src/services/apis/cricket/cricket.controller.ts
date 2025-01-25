@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CricketService } from './cricket.service';
 import { ModifyBody, setCreatedBy } from 'src/decorators/ModifyBody.decorator';

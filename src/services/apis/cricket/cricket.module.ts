@@ -8,6 +8,8 @@ import {
   CricketEvent,
   CricketEventSchema,
 } from './schemas/cricket.event.schema';
+import { ScoreUpdateGateway } from 'src/services/gateways/scoreUpdate/scoreUpdate';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
@@ -18,6 +20,7 @@ import {
       { name: CricketEvent.name, schema: CricketEventSchema },
     ]),
     MatchesModule,
+    UsersModule,
   ],
   controllers: [CricketController],
   providers: [CricketService],
