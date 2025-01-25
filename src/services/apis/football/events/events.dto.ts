@@ -1,19 +1,14 @@
 import { z } from 'zod';
+import { Types } from 'mongoose';
 
-const PlayerSchema = z.object({
-  name: z.string(),
-  number: z.number().int().positive(),
-});
-
-const AssistSchema = PlayerSchema;
+// Reflecting TeamPlayer fields in the schema
 
 export const GoalEventSchema = z.object({
   type: z.literal('goal'),
   details: z.object({
-    team: z.string(),
-    scorer: PlayerSchema.extend({
-      assist: AssistSchema.optional(),
-    }),
+    team: z.instanceof(Types.ObjectId),
+    scorer: z.instanceof(Types.ObjectId),
+    assist: z.instanceof(Types.ObjectId).optional(),
     minute: z.number().int().min(0),
     description: z.string(),
   }),
@@ -24,9 +19,9 @@ export const GoalEventSchema = z.object({
 export const SubstitutionEventSchema = z.object({
   type: z.literal('substitution'),
   details: z.object({
-    team: z.string(),
-    outPlayer: PlayerSchema,
-    inPlayer: PlayerSchema,
+    team: z.instanceof(Types.ObjectId),
+    outPlayer: z.instanceof(Types.ObjectId),
+    inPlayer: z.instanceof(Types.ObjectId),
     minute: z.number().int().min(0),
   }),
   timestamp: z.date(),
@@ -36,8 +31,8 @@ export const SubstitutionEventSchema = z.object({
 export const FoulEventSchema = z.object({
   type: z.literal('foul'),
   details: z.object({
-    team: z.string(),
-    player: PlayerSchema,
+    team: z.instanceof(Types.ObjectId),
+    player: z.instanceof(Types.ObjectId),
     type: z.string(),
     card: z.enum(['yellow', 'red', 'none']),
     minute: z.number().int().min(0),
@@ -49,8 +44,8 @@ export const FoulEventSchema = z.object({
 export const InjuryEventSchema = z.object({
   type: z.literal('injury'),
   details: z.object({
-    team: z.string(),
-    player: PlayerSchema,
+    team: z.instanceof(Types.ObjectId),
+    player: z.instanceof(Types.ObjectId),
     severity: z.enum(['minor', 'moderate', 'severe']),
     minute: z.number().int().min(0),
   }),
@@ -61,8 +56,8 @@ export const InjuryEventSchema = z.object({
 export const PenaltyEventSchema = z.object({
   type: z.literal('penalty'),
   details: z.object({
-    team: z.string(),
-    player: PlayerSchema,
+    team: z.instanceof(Types.ObjectId),
+    player: z.instanceof(Types.ObjectId),
     success: z.boolean(),
     minute: z.number().int().min(0),
   }),
@@ -70,14 +65,12 @@ export const PenaltyEventSchema = z.object({
   matchId: z.string(),
 });
 
-export const VarEventSchema = z.object({
-  type: z.literal('var_decision'),
+export const GenericEventSchema = z.object({
+  type: z.literal('generic'),
   details: z.object({
-    incident: z.string(),
-    team: z.string(),
-    player: PlayerSchema,
-    decision: z.string(),
+    description: z.string(),
     minute: z.number().int().min(0),
+    data: z.record(z.string(), z.any()),
   }),
   timestamp: z.date(),
   matchId: z.string(),
@@ -89,7 +82,7 @@ export const CreateMatchEventDto = z.discriminatedUnion('type', [
   FoulEventSchema,
   InjuryEventSchema,
   PenaltyEventSchema,
-  VarEventSchema,
+  GenericEventSchema,
 ]);
 
 export type CreateMatchEventDtoType = z.infer<typeof CreateMatchEventDto>;

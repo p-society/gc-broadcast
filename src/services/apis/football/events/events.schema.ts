@@ -1,57 +1,52 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
+import { TeamPlayer } from '../../teamPlayer/schemas/teamPlayer.schema';
+import { cardType, severityType } from './constants/FootballEnum';
 
 // Common interfaces
-interface Player {
-  name: string;
-  number: number;
-}
-
-interface Assist extends Player {}
 
 // Event-specific detail interfaces
 interface GoalDetails {
-  team: string;
-  scorer: Player & { assist?: Assist };
+  team: Types.ObjectId;
+  scorer: TeamPlayer;
+  assist?: TeamPlayer;
   minute: number;
   description: string;
 }
 
 interface SubstitutionDetails {
-  team: string;
-  outPlayer: Player;
-  inPlayer: Player;
+  team: Types.ObjectId;
+  outPlayer: TeamPlayer;
+  inPlayer: TeamPlayer;
   minute: number;
 }
 
 interface FoulDetails {
-  team: string;
-  player: Player;
+  team: Types.ObjectId;
+  player: TeamPlayer;
   type: string;
-  card: 'yellow' | 'red' | 'none';
+  card: cardType;
   minute: number;
 }
 
 interface InjuryDetails {
-  team: string;
-  player: Player;
-  severity: 'minor' | 'moderate' | 'severe';
+  team: Types.ObjectId;
+  player: TeamPlayer;
+  severity: severityType;
   minute: number;
 }
 
 interface PenaltyDetails {
-  team: string;
-  player: Player;
+  team: Types.ObjectId;
+  player: TeamPlayer;
   success: boolean;
   minute: number;
 }
 
-interface VarDetails {
-  incident: string;
-  team: string;
-  player: Player;
-  decision: string;
+interface GenericEventDetails {
+  description: string;
   minute: number;
+  data: Record<string, any>;
 }
 
 type EventDetails =
@@ -60,7 +55,7 @@ type EventDetails =
   | FoulDetails
   | InjuryDetails
   | PenaltyDetails
-  | VarDetails;
+  | GenericEventDetails;
 
 @Schema({ timestamps: true })
 export class MatchEvent extends Document {
