@@ -36,12 +36,17 @@ export class Users extends SoftDeleteSchema {
   lastName: string;
 
   @Prop({
+    type: Number,
+    enum: [1, 4096],
+  })
+  type: number;
+
+  @Prop({
     type: String,
     trim: true,
     required: true,
     unique: true,
     index: true,
-    match: /^[0-9]{10}$/,
   })
   phone: string;
 

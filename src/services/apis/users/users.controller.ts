@@ -35,12 +35,29 @@ export class UsersController {
     return await this.usersService._get(id, query);
   }
 
-  @Public()
   @Post()
-  async create(@Body() createUsersDto: Users) {
+  async create(@Body() createUsersDto: Users, @User() users: Users) {
     /**
      * @todo use zod for validations...
      */
+    const saltOrRounds = 10;
+    console.log({ users });
+    if (users.type === 4096) {
+      const password = await bcrypt.hash(createUsersDto.password, saltOrRounds);
+
+      const user = (await this.usersService._create({
+        ...createUsersDto,
+        password,
+      })) as Users;
+
+      const sanitizedUser = this.usersService.sanitizeUser(user);
+      const payload = { sub: { id: user._id }, user };
+
+      return {
+        user: sanitizedUser,
+        accessToken: await this.jwtService.signAsync(payload),
+      };
+    }
     if (!createUsersDto.email || !createUsersDto['otp']) {
       throw new BadRequestException('Email or OTP not provided!');
     }
@@ -53,7 +70,6 @@ export class UsersController {
       true, // removeEntryAfterCheck
     );
 
-    const saltOrRounds = 10;
     const password = await bcrypt.hash(createUsersDto.password, saltOrRounds);
 
     const user = (await this.usersService._create({
